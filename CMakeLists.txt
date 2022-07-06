@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(rtow)
+project(rtnow)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -7,22 +7,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(deps/glfw)
 add_subdirectory(deps/glm)
 
-add_executable(rtow 
+add_executable(rtnow 
     deps/glad/src/glad.c
     src/main.cpp
 )
 
-target_link_libraries(rtow PUBLIC
+target_link_libraries(rtnow PUBLIC
     glfw
     glm
 )
 
-target_include_directories(rtow PUBLIC
+target_include_directories(rtnow PUBLIC
     deps/glad/include
     deps/stb
     include
 )
 
-target_compile_definitions(rtow PUBLIC
+target_compile_definitions(rtnow PUBLIC
     GLFW_INCLUDE_NONE
 )

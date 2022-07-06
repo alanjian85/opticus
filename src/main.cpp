@@ -15,7 +15,7 @@ static Vertex vertices[] = {
     { {  3,  1 }, { 2, 0 } }
 };
 
-void loop(GLFWwindow* window) {
+void run(GLFWwindow* window) {
     GLuint vbo;
     glCreateBuffers(1, &vbo);
     glNamedBufferData(vbo, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -55,12 +55,12 @@ int main() {
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
-    GLFWwindow* window = glfwCreateWindow(800, 600, "RTOW", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "rtnow", nullptr, nullptr);
 
     glfwMakeContextCurrent(window);
     gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
-    loop(window);
+    run(window);
 
     glfwDestroyWindow(window);
     glfwTerminate();
