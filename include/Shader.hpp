@@ -2,6 +2,8 @@
 #define SHADER_HPP
 
 #include <algorithm>
+#include <stdexcept>
+#include <string>
 
 #include <glad/glad.h>
 
@@ -11,8 +13,19 @@ public:
 
     }
 
-    Shader(GLenum type) {
+    Shader(GLenum type, const char* source) {
         m_shader = glCreateShader(type);
+        glShaderSource(m_shader, 1, &source, nullptr);
+        glCompileShader(m_shader);
+        GLint compileStatus;
+        glGetShaderiv(m_shader, GL_COMPILE_STATUS, &compileStatus);
+        if (compileStatus == GL_FALSE) {
+            GLint logLength;
+            glGetShaderiv(m_shader, GL_INFO_LOG_LENGTH, &logLength);
+            std::string log(logLength, ' ');
+            glGetShaderInfoLog(m_shader, logLength, nullptr, log.data());
+            throw std::runtime_error("Failed to compile shader: " + log);
+        }
     }
 
     Shader(Shader&& other) noexcept {
@@ -38,16 +51,16 @@ private:
 
 class VertexShader : public Shader {
 public:
-    VertexShader() : Shader(GL_VERTEX_SHADER) {
+    VertexShader() = default;
 
-    }
+    VertexShader(const char* source) : Shader(GL_VERTEX_SHADER, source) {}
 };
 
 class FragmentShader : public Shader {
 public:
-    FragmentShader() : Shader(GL_FRAGMENT_SHADER) {
-    
-    }
+    FragmentShader() = default;
+
+    FragmentShader(const char* source) : Shader(GL_FRAGMENT_SHADER, source) {}
 };
 
 #endif // SHADER_HPP
