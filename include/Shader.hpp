@@ -4,8 +4,21 @@
 #include <algorithm>
 #include <stdexcept>
 #include <string>
+#include <fstream>
 
 #include <glad/glad.h>
+
+inline std::string readFile(const char* path) {
+    std::ifstream file(path, std::ios::ate);
+    if (!file.is_open()) {
+        throw std::runtime_error(std::string("Failed to open file: ") + path);
+    }
+    size_t size = file.tellg();
+    std::string buffer(size, ' ');
+    file.seekg(0);
+    file.read(buffer.data(), size);
+    return buffer;
+}
 
 class Shader {
 public:
@@ -24,7 +37,7 @@ public:
             glGetShaderiv(m_shader, GL_INFO_LOG_LENGTH, &logLength);
             std::string log(logLength, ' ');
             glGetShaderInfoLog(m_shader, logLength, nullptr, log.data());
-            throw std::runtime_error("Failed to compile shader: " + log);
+            throw std::runtime_error("Failed to compile shader: \n" + log);
         }
     }
 

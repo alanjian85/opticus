@@ -1,3 +1,6 @@
+#include <iostream>
+#include <stdexcept>
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -30,8 +33,8 @@ void run(GLFWwindow* window) {
     glVertexArrayAttribBinding(vao, 0, 0);
     glVertexArrayAttribBinding(vao, 1, 0);
 
-    VertexShader vertexShader;
-    FragmentShader fragmentShader;
+    VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
+    FragmentShader fragmentShader(readFile("shaders/frag.glsl").c_str());
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -60,7 +63,11 @@ int main() {
     glfwMakeContextCurrent(window);
     gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
-    run(window);
+    try {
+        run(window);
+    } catch (std::exception& e) {
+        std::cerr << e.what() << '\n';
+    }
 
     glfwDestroyWindow(window);
     glfwTerminate();
