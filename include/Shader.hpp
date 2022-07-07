@@ -22,9 +22,7 @@ inline std::string readFile(const char* path) {
 
 class Shader {
 public:
-    Shader() : m_shader(0) {
-
-    }
+    Shader() : m_shader(0) { }
 
     Shader(GLenum type, const char* source) {
         m_shader = glCreateShader(type);
@@ -48,13 +46,14 @@ public:
     Shader& operator=(Shader&& other) noexcept {
         glDeleteShader(m_shader);
         m_shader = std::exchange(other.m_shader, 0);
+        return *this;
     }
 
     ~Shader() {
         glDeleteShader(m_shader);
     }
 
-    GLuint getShader() {
+    GLuint getShader() const {
         return m_shader;
     }
 
@@ -66,14 +65,14 @@ class VertexShader : public Shader {
 public:
     VertexShader() = default;
 
-    VertexShader(const char* source) : Shader(GL_VERTEX_SHADER, source) {}
+    explicit VertexShader(const char* source) : Shader(GL_VERTEX_SHADER, source) {}
 };
 
 class FragmentShader : public Shader {
 public:
     FragmentShader() = default;
 
-    FragmentShader(const char* source) : Shader(GL_FRAGMENT_SHADER, source) {}
+    explicit FragmentShader(const char* source) : Shader(GL_FRAGMENT_SHADER, source) {}
 };
 
 #endif // SHADER_HPP

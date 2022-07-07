@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 #include "Shader.hpp"
+#include "Program.hpp"
 
 struct Vertex {
     glm::vec2 pos;
@@ -35,11 +36,13 @@ void run(GLFWwindow* window) {
 
     VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
     FragmentShader fragmentShader(readFile("shaders/frag.glsl").c_str());
+    Program program(vertexShader, fragmentShader);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
         glBindVertexArray(vao);
+        program.bind();
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
