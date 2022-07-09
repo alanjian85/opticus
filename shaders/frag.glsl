@@ -9,6 +9,7 @@ uniform float fov; // radian
 uniform vec3 camRight;
 uniform vec3 camUp;
 uniform vec3 camFront;
+uniform vec3 camPos;
 
 in vec2 fragTexCoord;
 
@@ -30,20 +31,18 @@ vec3 rayColor(Ray ray) {
 }
 
 void main() {
-    // Constants definitions
     const float viewportHeight = 2.0;
 
-    // Main
     const float u = fragTexCoord.x, v = fragTexCoord.y;
     const float focalLength = 0.5 / tan(fov * 0.5);
     const float viewportWidth = aspectRatio * viewportHeight;
 
     Ray ray;
-    ray.o = vec3(0.0, 0.0, 0.0);
+    ray.o = camPos;
     ray.d = normalize(
-        (u - 0.5) * camRight * viewportWidth + 
+        (u - 0.5) * camRight * viewportWidth +
         (v - 0.5) * camUp * viewportHeight   +
-        focalLength * camFront - ray.o
+        focalLength * camFront
     );
     outColor = vec4(rayColor(ray), 1.0);
 }

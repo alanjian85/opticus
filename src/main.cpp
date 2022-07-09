@@ -48,12 +48,19 @@ public:
     }
 
     void loop() {
+        float lastTime = static_cast<float>(glfwGetTime());
         while (!glfwWindowShouldClose(m_window)) {
             glfwPollEvents();
 
             if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_TRUE) {
                 glfwSetWindowShouldClose(m_window, GLFW_TRUE);
             }
+
+            const float currTime = static_cast<float>(glfwGetTime());
+            const float delta = currTime - lastTime;
+            lastTime = currTime;
+
+            updateCameraPosition(delta);
 
             m_program->bind();
             m_screenMesh.draw();
@@ -76,6 +83,29 @@ public:
         m_program->getUniform("camRight") = m_camera.getRight();
         m_program->getUniform("camUp") = m_camera.getUp();
         m_program->getUniform("camFront") = m_camera.getFront();
+    }
+
+    void updateCameraPosition(float delta) {
+        const float speed = 2.5f;
+
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_TRUE) {
+            m_camera.pos += m_camera.getFront() * speed * delta;
+
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_TRUE) {
+            m_camera.pos -= m_camera.getFront() * speed * delta;
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_TRUE) {
+            m_camera.pos += m_camera.getRight() * speed * delta;
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_TRUE) {
+            m_camera.pos -= m_camera.getRight() * speed * delta;
+        }
+
+        m_program->getUniform("camPos") = m_camera.pos;
     }
 
     static void resizeCallback(GLFWwindow* window, int width, int height) {
@@ -112,7 +142,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 100);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
