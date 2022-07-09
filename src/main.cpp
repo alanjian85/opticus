@@ -28,6 +28,7 @@ public:
 
     void init() {
         Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
+        Shader::includeShader("/include/sphere.glsl", readFile("shaders/sphere.glsl").c_str());
 
         VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
         FragmentShader fragmentShader(readFile("shaders/frag.glsl").c_str());

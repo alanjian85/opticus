@@ -2,6 +2,7 @@
 #extension GL_ARB_shading_language_include : require
 
 #include "/include/ray.glsl"
+#include "/include/sphere.glsl"
 
 uniform float aspectRatio;
 uniform vec3 camRight;
@@ -15,6 +16,12 @@ out vec4 outColor;
 // the direction of the ray is required to be normalized
 // TODO: Support transparent object
 vec3 rayColor(Ray ray) {
+    Sphere sphere;
+    sphere.c = vec3(0.0, 0.0, -1.0);
+    sphere.r = 0.5;
+    if (sphereHit(sphere, ray)) {
+        return vec3(1.0, 0.0, 0.0);
+    }
     float t = (ray.d.y + 1.0) * 0.5;
     return t * vec3(1.0, 1.0, 1.0) + (1.0 - t) * vec3(0.5, 0.7, 1.0);
 }
