@@ -26,6 +26,9 @@ public:
 
     Shader(GLenum type, const char* source) {
         m_shader = glCreateShader(type);
+        if (m_shader == 0) {
+            throw std::runtime_error("An error occurs while creating the shader object");
+        }
         glShaderSource(m_shader, 1, &source, nullptr);
         glCompileShader(m_shader);
         GLint compileStatus;
@@ -55,6 +58,10 @@ public:
 
     GLuint getShader() const {
         return m_shader;
+    }
+
+    static void includeShader(const char* name, const char* source) {
+        glNamedStringARB(GL_SHADER_INCLUDE_ARB, -1, name, -1, source);
     }
 
 private:

@@ -30,7 +30,7 @@ public:
     Program() : m_program(0) {}
 
     Program(const Shader& vert, const Shader& frag) {
-        m_program = glCreateProgram();
+        create();
         glAttachShader(m_program, vert.getShader());
         glAttachShader(m_program, frag.getShader());
         link();
@@ -59,6 +59,13 @@ public:
     }
 
 private:
+    void create() {
+        m_program = glCreateProgram();
+        if (m_program == 0) {
+            throw std::runtime_error("An error occurs while creating the program object");
+        }
+    }
+
     void link() {
         glLinkProgram(m_program);
         GLint linkStatus;

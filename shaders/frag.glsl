@@ -1,15 +1,13 @@
 #version 450 core
+#extension GL_ARB_shading_language_include : require
+
+#include "/include/ray.glsl"
 
 uniform float aspectRatio;
 
 in vec2 fragTexCoord;
 
 out vec4 outColor;
-
-struct Ray {
-    vec3 o;
-    vec3 d;
-};
 
 // the direction of the ray is required to be normalized
 // TODO: Support transparent object

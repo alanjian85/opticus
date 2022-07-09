@@ -34,6 +34,8 @@ void run(GLFWwindow* window) {
     glVertexArrayAttribBinding(vao, 0, 0);
     glVertexArrayAttribBinding(vao, 1, 0);
 
+    Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
+
     VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
     FragmentShader fragmentShader(readFile("shaders/frag.glsl").c_str());
     Program program(vertexShader, fragmentShader);
