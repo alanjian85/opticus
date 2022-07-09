@@ -9,17 +9,21 @@
 #include "Shader.hpp"
 #include "Program.hpp"
 #include "ScreenQuad.hpp"
+#include "Camera.hpp"
 
 class Application {
 public:
     Application(GLFWwindow* window) {
         m_window = window;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetWindowUserPointer(window, this);
         glfwSetFramebufferSizeCallback(window, resizeCallback);
+        glfwSetCursorPosCallback(window, cursorCallback);
     }
 
     ~Application() {
         glfwSetFramebufferSizeCallback(m_window, nullptr);
+        glfwSetCursorPosCallback(m_window, nullptr);
     }
 
     void init() {
@@ -33,14 +37,18 @@ public:
         glfwGetFramebufferSize(m_window, &width, &height);
         m_program->getUniform("aspectRatio") = static_cast<float>(width) / height;
 
-        m_program->getUniform("camRight") = glm::vec3(1.0f, 0.0f, 0.0f);
-        m_program->getUniform("camUp") = glm::vec3(0.0f, 1.0f, 0.0f);
-        m_program->getUniform("camFront") = glm::vec3(0.0f, 0.0f, 1.0f);
+        m_program->getUniform("camRight") = m_camera.getRight();
+        m_program->getUniform("camUp") = m_camera.getUp();
+        m_program->getUniform("camFront") = m_camera.getFront();
     }
 
     void loop() {
         while (!glfwWindowShouldClose(m_window)) {
             glfwPollEvents();
+
+            if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_TRUE) {
+                glfwSetWindowShouldClose(m_window, GLFW_TRUE);
+            }
 
             m_program->bind();
             m_screenQuad.draw();
@@ -49,15 +57,45 @@ public:
         }
     }
 
+    void updateCameraDirection(float xoffset, float yoffset) {
+        const float sensitivity = 0.1f;
+
+        xoffset *= sensitivity;
+        yoffset *= sensitivity;
+
+        m_camera.yaw += xoffset;
+        m_camera.pitch += yoffset;
+
+        m_camera.pitch = std::clamp(m_camera.pitch, -89.0f, 89.0f);
+
+        m_program->getUniform("camRight") = m_camera.getRight();
+        m_program->getUniform("camUp") = m_camera.getUp();
+        m_program->getUniform("camFront") = m_camera.getFront();
+    }
+
     static void resizeCallback(GLFWwindow* window, int width, int height) {
         Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
         glViewport(0, 0, width, height);
         self->m_program->getUniform("aspectRatio") = static_cast<float>(width) / height;
     }
+
+    static void cursorCallback(GLFWwindow* window, double xpos, double ypos) {
+        static double lastx = xpos, lasty = ypos;
+        
+        Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
+        float xoffset = static_cast<float>(xpos - lastx), yoffset = static_cast<float>(lasty - ypos);
+
+        self->updateCameraDirection(xoffset, yoffset);
+
+        lastx = xpos;
+        lasty = ypos;
+    }
 private:
     GLFWwindow* m_window;
     std::optional<Program> m_program;
     ScreenQuad m_screenQuad;
+
+    Camera m_camera;
 };
 
 int main() {
