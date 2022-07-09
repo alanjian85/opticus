@@ -75,10 +75,10 @@ public:
         xoffset *= sensitivity;
         yoffset *= sensitivity;
 
-        m_camera.yaw += xoffset;
-        m_camera.pitch += yoffset;
+        m_camera.setYaw(m_camera.getYaw() + xoffset);
+        m_camera.setPitch(m_camera.getPitch() + yoffset);
 
-        m_camera.pitch = std::clamp(m_camera.pitch, -89.0f, 89.0f);
+        m_camera.setPitch(std::clamp(m_camera.getPitch(), -89.0f, 89.0f));
 
         m_program->getUniform("camRight") = m_camera.getRight();
         m_program->getUniform("camUp") = m_camera.getUp();
