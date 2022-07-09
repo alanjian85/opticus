@@ -57,7 +57,10 @@ void run(GLFWwindow* window) {
 }
 
 int main() {
-    glfwInit();
+    if (glfwInit() == GL_FALSE) {
+        std::cerr << "Failed to initialize GLFW\n";
+        return 1;
+    }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -65,10 +68,17 @@ int main() {
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
-    GLFWwindow* window = glfwCreateWindow(800, 600, "rtnow", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Ray Tracing Now!", nullptr, nullptr);
+    if (!window) {
+        std::cerr << "Failed to create window\n";
+        return 1;
+    }
 
     glfwMakeContextCurrent(window);
-    gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
+        std::cerr << "Failed to load OpenGL\n";
+        return 1;
+    }
 
     try {
         run(window);
