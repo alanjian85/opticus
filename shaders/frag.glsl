@@ -5,6 +5,7 @@
 #include "/include/sphere.glsl"
 
 uniform float aspectRatio;
+uniform float fov; // radian
 uniform vec3 camRight;
 uniform vec3 camUp;
 uniform vec3 camFront;
@@ -29,10 +30,10 @@ vec3 rayColor(Ray ray) {
 void main() {
     // Constants definitions
     const float viewportHeight = 2.0;
-    const float focalLength = 1.0;
 
     // Main
     const float u = fragTexCoord.x, v = fragTexCoord.y;
+    const float focalLength = 0.5 / tan(fov * 0.5);
     const float viewportWidth = aspectRatio * viewportHeight;
 
     Ray ray;

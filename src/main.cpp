@@ -37,6 +37,7 @@ public:
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
         m_program->getUniform("aspectRatio") = static_cast<float>(width) / height;
+        m_program->getUniform("fov") = glm::radians(45.0f);
 
         m_program->getUniform("camRight") = m_camera.getRight();
         m_program->getUniform("camUp") = m_camera.getUp();
