@@ -4,6 +4,8 @@
 #include <cassert>
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.hpp"
 
@@ -18,6 +20,11 @@ public:
 
     const Uniform& operator=(float value) const {
         glProgramUniform1f(m_program, m_location, value);
+        return *this;
+    }
+
+    const Uniform& operator=(glm::vec3 value) const {
+        glProgramUniform3fv(m_program, m_location, 1, glm::value_ptr(value));
         return *this;
     }
 private:

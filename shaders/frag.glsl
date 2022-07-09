@@ -4,6 +4,9 @@
 #include "/include/ray.glsl"
 
 uniform float aspectRatio;
+uniform vec3 camRight;
+uniform vec3 camUp;
+uniform vec3 camFront;
 
 in vec2 fragTexCoord;
 
@@ -28,9 +31,9 @@ void main() {
     Ray ray;
     ray.o = vec3(0.0, 0.0, 0.0);
     ray.d = normalize(
-        (u - 0.5) * vec3(viewportWidth, 0.0, 0.0) + 
-        (v - 0.5) * vec3(0.0, viewportHeight, 0.0) - 
-        vec3(0.0, 0.0, focalLength) - ray.o
+        (u - 0.5) * camRight * viewportWidth + 
+        (v - 0.5) * camUp * viewportHeight - 
+        focalLength * camFront - ray.o
     );
     outColor = vec4(rayColor(ray), 1.0);
 }

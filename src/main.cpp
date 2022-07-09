@@ -24,22 +24,22 @@ public:
 
     ~Application() {
         glfwSetFramebufferSizeCallback(m_window, nullptr);
-        glDeleteVertexArrays(1, &vao);
-        glDeleteBuffers(1, &vbo);
+        glDeleteVertexArrays(1, &m_vao);
+        glDeleteBuffers(1, &m_vbo);
     }
 
     void init() {
-        glCreateBuffers(1, &vbo);
-        glNamedBufferData(vbo, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glCreateBuffers(1, &m_vbo);
+        glNamedBufferData(m_vbo, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        glCreateVertexArrays(1, &vao);
-        glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(Vertex));
-        glEnableVertexArrayAttrib(vao, 0);
-        glEnableVertexArrayAttrib(vao, 1);
-        glVertexArrayAttribFormat(vao, 0, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
-        glVertexArrayAttribFormat(vao, 1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord));
-        glVertexArrayAttribBinding(vao, 0, 0);
-        glVertexArrayAttribBinding(vao, 1, 0);
+        glCreateVertexArrays(1, &m_vao);
+        glVertexArrayVertexBuffer(m_vao, 0, m_vbo, 0, sizeof(Vertex));
+        glEnableVertexArrayAttrib(m_vao, 0);
+        glEnableVertexArrayAttrib(m_vao, 1);
+        glVertexArrayAttribFormat(m_vao, 0, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
+        glVertexArrayAttribFormat(m_vao, 1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord));
+        glVertexArrayAttribBinding(m_vao, 0, 0);
+        glVertexArrayAttribBinding(m_vao, 1, 0);
 
         Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
 
@@ -50,6 +50,10 @@ public:
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
         m_program->getUniform("aspectRatio") = static_cast<float>(width) / height;
+
+        m_program->getUniform("camRight") = glm::vec3(1.0f, 0.0f, 0.0f);
+        m_program->getUniform("camUp") = glm::vec3(0.0f, 1.0f, 0.0f);
+        m_program->getUniform("camFront") = glm::vec3(0.0f, 0.0f, 1.0f);
     }
 
     void loop() {
@@ -57,7 +61,7 @@ public:
             glfwPollEvents();
 
             m_program->bind();
-            glBindVertexArray(vao);
+            glBindVertexArray(m_vao);
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
             glfwSwapBuffers(m_window);
@@ -71,9 +75,10 @@ public:
     }
 private:
     GLFWwindow* m_window;
-    GLuint vbo;
-    GLuint vao;
+    GLuint m_vbo;
+    GLuint m_vao;
     std::optional<Program> m_program;
+    float m_aspectRatio;
 
     static Vertex vertices[3];
 };
