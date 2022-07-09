@@ -9,15 +9,15 @@ struct Vertex {
     glm::vec2 texCoord;
 };
 
-class ScreenQuad {
+class ScreenMesh {
 public:
-    ScreenQuad();
+    ScreenMesh();
 
-    ScreenQuad(ScreenQuad&&) noexcept;
+    ScreenMesh(ScreenMesh&&) noexcept;
 
-    ScreenQuad& operator=(ScreenQuad&& other) noexcept;
+    ScreenMesh& operator=(ScreenMesh&& other) noexcept;
 
-    ~ScreenQuad();
+    ~ScreenMesh();
 
     void draw();
 

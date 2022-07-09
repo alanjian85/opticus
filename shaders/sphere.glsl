@@ -8,13 +8,17 @@ struct Sphere {
     float r;
 };
 
-bool sphereHit(Sphere self, Ray ray) {
+float sphereHit(Sphere self, Ray ray) {
     vec3 oc = ray.o - self.c;
     float a = dot(ray.d, ray.d);
     float b = 2.0 * dot(oc, ray.d);
     float c = dot(oc, oc) - self.r * self.r;
     float discriminant = b * b - 4 * a * c;
-    return discriminant > 0;
+    if (discriminant < 0) {
+        return -1.0;
+    } else {
+        return (-b - sqrt(discriminant)) / (2.0 * a);
+    }
 }
 
 #endif // SPHERE_GLSL

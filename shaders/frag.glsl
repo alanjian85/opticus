@@ -20,11 +20,13 @@ vec3 rayColor(Ray ray) {
     Sphere sphere;
     sphere.c = vec3(0.0, 0.0, -1.0);
     sphere.r = 0.5;
-    if (sphereHit(sphere, ray)) {
-        return vec3(1.0, 0.0, 0.0);
+    float t = sphereHit(sphere, ray);
+    if (t > 0.0) {
+        vec3 normal = normalize(rayAt(ray, t) - sphere.c);
+        return 0.5 * vec3(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0);
     }
-    float t = (ray.d.y + 1.0) * 0.5;
-    return t * vec3(1.0, 1.0, 1.0) + (1.0 - t) * vec3(0.5, 0.7, 1.0);
+    t = (ray.d.y + 1.0) * 0.5;
+    return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
 }
 
 void main() {

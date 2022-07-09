@@ -8,7 +8,7 @@
 
 #include "Shader.hpp"
 #include "Program.hpp"
-#include "ScreenQuad.hpp"
+#include "ScreenMesh.hpp"
 #include "Camera.hpp"
 
 class Application {
@@ -53,7 +53,7 @@ public:
             }
 
             m_program->bind();
-            m_screenQuad.draw();
+            m_screenMesh.draw();
 
             glfwSwapBuffers(m_window);
         }
@@ -95,7 +95,7 @@ public:
 private:
     GLFWwindow* m_window;
     std::optional<Program> m_program;
-    ScreenQuad m_screenQuad;
+    ScreenMesh m_screenMesh;
 
     Camera m_camera;
 };

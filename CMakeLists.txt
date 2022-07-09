@@ -10,7 +10,7 @@ add_subdirectory(deps/glm)
 add_executable(rtnow 
     deps/glad/src/glad.c
     src/main.cpp
-    src/ScreenQuad.cpp
+    src/ScreenMesh.cpp
 )
 
 target_link_libraries(rtnow PUBLIC

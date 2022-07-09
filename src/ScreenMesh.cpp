@@ -1,8 +1,8 @@
-#include "ScreenQuad.hpp"
+#include "ScreenMesh.hpp"
 
 #include <algorithm>
 
-ScreenQuad::ScreenQuad() {
+ScreenMesh::ScreenMesh() {
     glCreateBuffers(1, &m_vbo);
     glNamedBufferData(m_vbo, sizeof(s_vertices), s_vertices, GL_STATIC_DRAW);
 
@@ -16,12 +16,12 @@ ScreenQuad::ScreenQuad() {
     glVertexArrayAttribBinding(m_vao, 1, 0);
 }
 
-ScreenQuad::ScreenQuad(ScreenQuad&&) noexcept {
+ScreenMesh::ScreenMesh(ScreenMesh&&) noexcept {
     m_vao = std::exchange(m_vao, 0);
     m_vbo = std::exchange(m_vbo, 0);
 }
 
-ScreenQuad& ScreenQuad::operator=(ScreenQuad&& other) noexcept {
+ScreenMesh& ScreenMesh::operator=(ScreenMesh&& other) noexcept {
     glDeleteVertexArrays(1, &m_vao);
     glDeleteBuffers(1, &m_vbo);
     m_vao = std::exchange(m_vao, 0);
@@ -29,18 +29,18 @@ ScreenQuad& ScreenQuad::operator=(ScreenQuad&& other) noexcept {
     return *this;
 }
 
-ScreenQuad::~ScreenQuad() {
+ScreenMesh::~ScreenMesh() {
     glDeleteVertexArrays(1, &m_vao);
     glDeleteBuffers(1, &m_vbo);
 }
 
-void ScreenQuad::draw() {
+void ScreenMesh::draw() {
     glBindVertexArray(m_vao);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-Vertex ScreenQuad::s_vertices[3] = {
-    { { -1,  1 }, { 0, 0 } },
-    { { -1, -3 }, { 0, 2 } },
-    { {  3,  1 }, { 2, 0 } }
+Vertex ScreenMesh::s_vertices[3] = {
+    { { -1,  3 }, { 0, 2 } },
+    { { -1, -1 }, { 0, 0 } },
+    { {  3, -1 }, { 2, 0 } }
 };
