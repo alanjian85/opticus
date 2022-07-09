@@ -8,11 +8,7 @@
 
 #include "Shader.hpp"
 #include "Program.hpp"
-
-struct Vertex {
-    glm::vec2 pos;
-    glm::vec2 texCoord;
-};
+#include "ScreenQuad.hpp"
 
 class Application {
 public:
@@ -24,23 +20,9 @@ public:
 
     ~Application() {
         glfwSetFramebufferSizeCallback(m_window, nullptr);
-        glDeleteVertexArrays(1, &m_vao);
-        glDeleteBuffers(1, &m_vbo);
     }
 
     void init() {
-        glCreateBuffers(1, &m_vbo);
-        glNamedBufferData(m_vbo, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glCreateVertexArrays(1, &m_vao);
-        glVertexArrayVertexBuffer(m_vao, 0, m_vbo, 0, sizeof(Vertex));
-        glEnableVertexArrayAttrib(m_vao, 0);
-        glEnableVertexArrayAttrib(m_vao, 1);
-        glVertexArrayAttribFormat(m_vao, 0, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
-        glVertexArrayAttribFormat(m_vao, 1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord));
-        glVertexArrayAttribBinding(m_vao, 0, 0);
-        glVertexArrayAttribBinding(m_vao, 1, 0);
-
         Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
 
         VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
@@ -61,8 +43,7 @@ public:
             glfwPollEvents();
 
             m_program->bind();
-            glBindVertexArray(m_vao);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            m_screenQuad.draw();
 
             glfwSwapBuffers(m_window);
         }
@@ -75,18 +56,8 @@ public:
     }
 private:
     GLFWwindow* m_window;
-    GLuint m_vbo;
-    GLuint m_vao;
     std::optional<Program> m_program;
-    float m_aspectRatio;
-
-    static Vertex vertices[3];
-};
-
-Vertex Application::vertices[] = {
-    { { -1,  1 }, { 0, 0 } },
-    { { -1, -3 }, { 0, 2 } },
-    { {  3,  1 }, { 2, 0 } }
+    ScreenQuad m_screenQuad;
 };
 
 int main() {
