@@ -27,8 +27,6 @@ private:
 
 class Program {
 public:
-    Program() : m_program(0) {}
-
     Program(const Shader& vert, const Shader& frag) {
         create();
         glAttachShader(m_program, vert.getShader());

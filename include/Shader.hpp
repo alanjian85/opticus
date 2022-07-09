@@ -22,8 +22,6 @@ inline std::string readFile(const char* path) {
 
 class Shader {
 public:
-    Shader() : m_shader(0) { }
-
     Shader(GLenum type, const char* source) {
         m_shader = glCreateShader(type);
         if (m_shader == 0) {

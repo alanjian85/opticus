@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <optional>
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -13,50 +14,75 @@ struct Vertex {
     glm::vec2 texCoord;
 };
 
-static Vertex vertices[] = {
+class Application {
+public:
+    Application(GLFWwindow* window) {
+        m_window = window;
+        glfwSetWindowUserPointer(window, this);
+        glfwSetFramebufferSizeCallback(window, resizeCallback);
+    }
+
+    ~Application() {
+        glfwSetFramebufferSizeCallback(m_window, nullptr);
+        glDeleteVertexArrays(1, &vao);
+        glDeleteBuffers(1, &vbo);
+    }
+
+    void init() {
+        glCreateBuffers(1, &vbo);
+        glNamedBufferData(vbo, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glCreateVertexArrays(1, &vao);
+        glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(Vertex));
+        glEnableVertexArrayAttrib(vao, 0);
+        glEnableVertexArrayAttrib(vao, 1);
+        glVertexArrayAttribFormat(vao, 0, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
+        glVertexArrayAttribFormat(vao, 1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord));
+        glVertexArrayAttribBinding(vao, 0, 0);
+        glVertexArrayAttribBinding(vao, 1, 0);
+
+        Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
+
+        VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
+        FragmentShader fragmentShader(readFile("shaders/frag.glsl").c_str());
+        m_program = Program(vertexShader, fragmentShader);
+
+        int width, height;
+        glfwGetFramebufferSize(m_window, &width, &height);
+        m_program->getUniform("aspectRatio") = static_cast<float>(width) / height;
+    }
+
+    void loop() {
+        while (!glfwWindowShouldClose(m_window)) {
+            glfwPollEvents();
+
+            m_program->bind();
+            glBindVertexArray(vao);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            glfwSwapBuffers(m_window);
+        }
+    }
+
+    static void resizeCallback(GLFWwindow* window, int width, int height) {
+        Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
+        glViewport(0, 0, width, height);
+        self->m_program->getUniform("aspectRatio") = static_cast<float>(width) / height;
+    }
+private:
+    GLFWwindow* m_window;
+    GLuint vbo;
+    GLuint vao;
+    std::optional<Program> m_program;
+
+    static Vertex vertices[3];
+};
+
+Vertex Application::vertices[] = {
     { { -1,  1 }, { 0, 0 } },
     { { -1, -3 }, { 0, 2 } },
     { {  3,  1 }, { 2, 0 } }
 };
-
-void run(GLFWwindow* window) {
-    GLuint vbo;
-    glCreateBuffers(1, &vbo);
-    glNamedBufferData(vbo, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    GLuint vao;
-    glCreateVertexArrays(1, &vao);
-    glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(Vertex));
-    glEnableVertexArrayAttrib(vao, 0);
-    glEnableVertexArrayAttrib(vao, 1);
-    glVertexArrayAttribFormat(vao, 0, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
-    glVertexArrayAttribFormat(vao, 1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord));
-    glVertexArrayAttribBinding(vao, 0, 0);
-    glVertexArrayAttribBinding(vao, 1, 0);
-
-    Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
-
-    VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
-    FragmentShader fragmentShader(readFile("shaders/frag.glsl").c_str());
-    Program program(vertexShader, fragmentShader);
-
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    program.getUniform("aspectRatio") = static_cast<float>(width) / height;  
-
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-
-        glBindVertexArray(vao);
-        program.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glfwSwapBuffers(window);
-    }
-
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-}
 
 int main() {
     if (glfwInit() == GL_FALSE) {
@@ -83,7 +109,9 @@ int main() {
     }
 
     try {
-        run(window);
+        Application app(window);
+        app.init();
+        app.loop();
     } catch (std::exception& e) {
         std::cerr << e.what() << '\n';
     }
