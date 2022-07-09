@@ -1,0 +1,6 @@
+#ifndef UTILITY_GLSL
+#define UTILITY_GLSL
+
+#define FLT_MAX 3.402823466e+38F
+
+#endif // UTILITY_GLSL

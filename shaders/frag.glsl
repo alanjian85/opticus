@@ -1,8 +1,9 @@
 #version 450 core
 #extension GL_ARB_shading_language_include : require
 
-#include "/include/ray.glsl"
-#include "/include/sphere.glsl"
+#include "/include/geometry.glsl"
+#include "/include/primitives.glsl"
+#include "/include/utility.glsl"
 
 uniform float aspectRatio;
 uniform float fov; // radian
@@ -21,12 +22,11 @@ vec3 rayColor(Ray ray) {
     Sphere sphere;
     sphere.c = vec3(0.0, 0.0, -1.0);
     sphere.r = 0.5;
-    float t = sphereIntersect(sphere, ray);
-    if (t > 0.0) {
-        vec3 normal = normalize(rayAt(ray, t) - sphere.c);
-        return 0.5 * vec3(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0);
+    SurfaceInteraction interaction;
+    if (sphereIntersect(sphere, ray, interaction, 0.0, FLT_MAX)) {
+        return 0.5 * vec3(interaction.n.x + 1.0, interaction.n.y + 1.0, interaction.n.z + 1.0);
     }
-    t = (ray.d.y + 1.0) * 0.5;
+    float t = (ray.d.y + 1.0) * 0.5;
     return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
 }
 
