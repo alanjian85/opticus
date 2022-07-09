@@ -20,7 +20,7 @@ vec3 rayColor(Ray ray) {
     Sphere sphere;
     sphere.c = vec3(0.0, 0.0, -1.0);
     sphere.r = 0.5;
-    float t = sphereHit(sphere, ray);
+    float t = sphereIntersect(sphere, ray);
     if (t > 0.0) {
         vec3 normal = normalize(rayAt(ray, t) - sphere.c);
         return 0.5 * vec3(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0);
@@ -42,7 +42,7 @@ void main() {
     ray.o = vec3(0.0, 0.0, 0.0);
     ray.d = normalize(
         (u - 0.5) * camRight * viewportWidth + 
-        (v - 0.5) * camUp * viewportHeight - 
+        (v - 0.5) * camUp * viewportHeight   +
         focalLength * camFront - ray.o
     );
     outColor = vec4(rayColor(ray), 1.0);

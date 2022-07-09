@@ -5,7 +5,7 @@
 
 struct Camera {
     glm::vec3 getRight() {
-        return glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), getFront()));
+        return glm::normalize(glm::cross(getFront(), glm::vec3(0.0f, 1.0f, 0.0f)));
     }
     
     glm::vec3 getFront() {
@@ -17,11 +17,11 @@ struct Camera {
     }
 
     glm::vec3 getUp() {
-        return glm::normalize(glm::cross(getFront(), getRight()));
+        return glm::normalize(glm::cross(getRight(), getFront()));
     }
 
     glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f);
-    float yaw = 90.0f;
+    float yaw = -90.0f;
     float pitch = 0.0f;
 };
 
