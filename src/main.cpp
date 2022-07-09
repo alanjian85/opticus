@@ -38,6 +38,10 @@ void run(GLFWwindow* window) {
     FragmentShader fragmentShader(readFile("shaders/frag.glsl").c_str());
     Program program(vertexShader, fragmentShader);
 
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    program.getUniform("aspectRatio") = static_cast<float>(width) / height;  
+
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 

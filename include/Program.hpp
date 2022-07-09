@@ -1,9 +1,29 @@
 #ifndef PROGRAM_HPP
 #define PROGRAM_HPP
 
+#include <cassert>
+
 #include <glad/glad.h>
 
 #include "Shader.hpp"
+
+class Uniform {
+    friend class Program;
+public:
+    Uniform(GLuint program, GLuint location) 
+        : m_program(program), m_location(location) {
+        assert(program != 0);
+        assert(location != -1);
+    }
+
+    const Uniform& operator=(float value) const {
+        glProgramUniform1f(m_program, m_location, value);
+        return *this;
+    }
+private:
+    GLuint m_program;
+    GLuint m_location;
+};
 
 class Program {
 public:
@@ -32,6 +52,10 @@ public:
 
     void bind() const {
         glUseProgram(m_program);
+    }
+
+    Uniform getUniform(const char* name) {
+        return Uniform(m_program, glGetUniformLocation(m_program, name));
     }
 
 private:
