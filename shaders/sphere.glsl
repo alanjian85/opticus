@@ -1,13 +1,8 @@
-#ifndef PRIMITIVE_GLSL
-#define PRIMITIVE_GLSL
+#ifndef SPHERE_GLSL
+#define SPHERE_GLSL
 
-#include "geometry.glsl"
-
-struct SurfaceInteraction {
-    float t;
-    vec3 p;
-    vec3 n;
-};
+#include "ray.glsl"
+#include "shape.glsl"
 
 struct Sphere {
     vec3 c;
@@ -37,4 +32,4 @@ bool sphereIntersect(Sphere self, Ray ray, out SurfaceInteraction interaction, f
     return true;
 }
 
-#endif // PRIMITIVE_GLSL
+#endif // SPHERE_GLSL

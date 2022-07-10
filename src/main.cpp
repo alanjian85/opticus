@@ -30,8 +30,9 @@ public:
         glEnable(GL_SAMPLE_SHADING);
         glMinSampleShading(1.0f);
 
-        Shader::includeShader("/include/geometry.glsl", readFile("shaders/geometry.glsl").c_str());
-        Shader::includeShader("/include/primitives.glsl", readFile("shaders/primitives.glsl").c_str());
+        Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
+        Shader::includeShader("/include/shape.glsl", readFile("shaders/shape.glsl").c_str());
+        Shader::includeShader("/include/sphere.glsl", readFile("shaders/sphere.glsl").c_str());
         Shader::includeShader("/include/utility.glsl", readFile("shaders/utility.glsl").c_str());
 
         VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());

@@ -1,8 +1,8 @@
 #version 450 core
 #extension GL_ARB_shading_language_include : require
 
-#include "/include/geometry.glsl"
-#include "/include/primitives.glsl"
+#include "/include/ray.glsl"
+#include "/include/sphere.glsl"
 #include "/include/utility.glsl"
 
 uniform float aspectRatio;
