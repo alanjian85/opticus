@@ -16,6 +16,7 @@ struct Scene {
 Scene sceneInit() {
     Scene self;
     self.numSphere = 0;
+    self.numAabb = 0;
     return self;
 }
 

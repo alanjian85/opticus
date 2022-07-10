@@ -37,7 +37,8 @@ void main() {
 
     Scene scene = sceneInit();
     sceneAddSphere(scene, sphereInit(vec3(0.0, 0.0, -1.0), 0.5));
-    sceneAddAabb(scene, aabbInit(vec3(-0.5, -1.5, -0.5), vec3(0.5, -0.5, -1.5)));
+    sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0));
+    sceneAddAabb(scene, aabbInit(vec3(-1.75, -0.5, -0.5), vec3(-0.75, 0.5, -1.5)));
 
     Ray ray;
     ray.o = camPos;
