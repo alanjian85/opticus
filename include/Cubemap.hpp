@@ -19,10 +19,10 @@ public:
                 format = GL_R8;
                 break;
             case 3:
-                format = GL_RGB8;
+                format = GL_SRGB8;
                 break;
             case 4:
-                format = GL_RGBA8;
+                format = GL_SRGB8_ALPHA8;
                 break;
         }
         glTextureStorage3D(m_texture, 1, format, width, height, 6);

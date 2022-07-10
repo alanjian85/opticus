@@ -28,6 +28,7 @@ public:
     }
 
     void init() {
+        glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_MULTISAMPLE);
         glMinSampleShading(1.0f);
         
