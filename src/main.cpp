@@ -28,13 +28,11 @@ public:
     }
 
     void init() {
-        glEnable(GL_SAMPLE_SHADING);
-        glMinSampleShading(1.0f);
-
         Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
         Shader::includeShader("/include/shape.glsl", readFile("shaders/shape.glsl").c_str());
         Shader::includeShader("/include/sphere.glsl", readFile("shaders/sphere.glsl").c_str());
-        Shader::includeShader("/include/AABB.glsl", readFile("shaders/AABB.glsl").c_str());
+        Shader::includeShader("/include/aabb.glsl", readFile("shaders/aabb.glsl").c_str());
+        Shader::includeShader("/include/scene.glsl", readFile("shaders/scene.glsl").c_str());
         Shader::includeShader("/include/utility.glsl", readFile("shaders/utility.glsl").c_str());
 
         VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
@@ -44,7 +42,7 @@ public:
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
         m_program->getUniform("aspectRatio") = static_cast<float>(width) / height;
-        m_program->getUniform("fov") = glm::radians(45.0f);
+        m_program->getUniform("fov") = 45.0f;
 
         m_program->getUniform("camRight") = m_camera.getRight();
         m_program->getUniform("camUp") = m_camera.getUp();
@@ -164,7 +162,6 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 100);
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
