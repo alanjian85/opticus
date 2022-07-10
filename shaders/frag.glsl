@@ -20,12 +20,25 @@ out vec4 outColor;
 
 // the direction of the ray is required to be normalized
 // TODO: Support transparent object
-vec3 rayColor(Ray ray, Scene scene) {
-    SurfaceInteraction interaction;
-    if (sceneIntersect(scene, ray, interaction, 0.0, FLT_MAX)) {
-        return 0.5 * (interaction.n + vec3(1.0));
+vec3 rayColor(Ray ray, Scene scene, int depth) {
+    vec3 result = vec3(1.0, 1.0, 1.0);
+    while (depth > 0) {
+        SurfaceInteraction interaction;
+        if (sceneIntersect(scene, ray, interaction, 0.001, FLT_MAX)) {
+            if (depth == 1) {
+                result = vec3(0.0, 0.0, 0.0);
+            } else {
+                result *= 0.5;
+                ray.o = interaction.p;
+                ray.d = normalize(interaction.n + randomInUnitSphere());
+            }
+        } else {
+            result *= texture(skybox, vec4(ray.d, 0.0)).rgb;
+            break;
+        }
+        --depth;
     }
-    return texture(skybox, vec4(ray.d, 0.0)).rgb;
+    return result;
 }
 
 void main() {
@@ -49,5 +62,5 @@ void main() {
         (v - 0.5) * camUp * viewportHeight   +
         camFront * focalLength
     );
-    outColor = vec4(rayColor(ray, scene), 1.0);
+    outColor = vec4(rayColor(ray, scene, 50), 1.0);
 }

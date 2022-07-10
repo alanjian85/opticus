@@ -31,4 +31,16 @@ float randomFloat() {
     return float(randomUint()) / float(RAND_MAX);
 }
 
+float randomFloat(float min, float max) {
+    return min + (max - min) * randomFloat();
+}
+
+vec3 randomInUnitSphere() {
+    while (true) {
+        vec3 p = vec3(randomFloat(-1.0, 1.0), randomFloat(-1.0, 1.0), randomFloat(-1.0, 1.0));
+        if (dot(p, p) >= 1.0) continue;
+        return p;
+    }
+}
+
 #endif // RANDOM_GLSL
