@@ -35,6 +35,8 @@ void main() {
     const float focalLength = 0.5 / tan(radians(fov) * 0.5);
     const float viewportWidth = aspectRatio * viewportHeight;
 
+    randomInit();
+
     Scene scene = sceneInit();
     sceneAddSphere(scene, sphereInit(vec3(0.0, 0.0, -1.0), 0.5));
     sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0));

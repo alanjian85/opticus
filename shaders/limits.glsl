@@ -1,7 +1,7 @@
 #ifndef UTILITY_GLSL
 #define UTILITY_GLSL
 
-#define UINT_MAX 0xFFFFFFFF
+#define UINT_MAX 0xFFFFFFFFU
 
 #define FLT_MAX 3.402823466e+38F
 

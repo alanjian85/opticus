@@ -23,6 +23,11 @@ public:
         return *this;
     }
 
+    const Uniform& operator=(unsigned value) const {
+        glProgramUniform1ui(m_program, m_location, value);
+        return *this;
+    }
+
     const Uniform& operator=(float value) const {
         glProgramUniform1f(m_program, m_location, value);
         return *this;

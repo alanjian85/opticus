@@ -5,17 +5,30 @@
 
 #define RAND_MAX UINT_MAX
 
-uint random_uint(inout uint seed) {
-    seed = (seed ^ 61) ^ (seed >> 16);
-    seed *= 9;
-    seed = seed ^ (seed >> 4);
-    seed *= 0x27d4eb2d;
-    seed = seed ^ (seed >> 15);
+uint hash(uint seed) {
+    seed = (seed ^ 61u) ^ (seed >> 16u);
+    seed *= 9u;
+    seed = seed ^ (seed >> 4u);
+    seed *= 0x27D4EB2Du;
+    seed = seed ^ (seed >> 15u);
     return seed;
 }
 
-float random_float(inout uint seed) {
-    return float(random_uint(seed)) / float(RAND_MAX);
+uniform uint frame;
+
+uint seed;
+
+void randomInit() {
+    seed = hash(hash(uint(gl_FragCoord.x) + hash(uint(gl_FragCoord.y))) + frame);
+}
+
+uint randomUint() {
+    seed = hash(seed);
+    return seed;
+}
+
+float randomFloat() {
+    return float(randomUint()) / float(RAND_MAX);
 }
 
 #endif // RANDOM_GLSL

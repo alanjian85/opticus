@@ -69,6 +69,7 @@ public:
 
     void loop() {
         float lastTime = static_cast<float>(glfwGetTime());
+        unsigned int frame = 0;
         while (!glfwWindowShouldClose(m_window)) {
             glfwPollEvents();
 
@@ -79,6 +80,7 @@ public:
             const float currTime = static_cast<float>(glfwGetTime());
             const float delta = currTime - lastTime;
             lastTime = currTime;
+            m_program->getUniform("frame") = frame++;
 
             updateCameraPosition(delta);
 
