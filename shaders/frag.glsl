@@ -22,7 +22,7 @@ out vec4 outColor;
 // TODO: Support transparent object
 vec3 rayColor(Ray ray) {
     SurfaceInteraction interaction;
-    if (aabbIntersect(aabbInit(vec3(-0.5, -0.5, -0.5), vec3(0.5, 0.5, -1.5)), ray, interaction, 0.0, FLT_MAX)) {
+    if (aabbIntersect(aabbInit(vec3(-1.5, -0.5, -0.5), vec3(1.5, 0.5, -1.5)), ray, interaction, 0.0, FLT_MAX)) {
         return 0.5 * vec3(interaction.n.x + 1.0, interaction.n.y + 1.0, interaction.n.z + 1.0);
     }
     return texture(skybox, vec4(ray.d, 0.0)).rgb;
