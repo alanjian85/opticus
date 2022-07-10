@@ -45,7 +45,7 @@ bool aabbIntersect(Aabb self, Ray ray, out SurfaceInteraction interaction, float
         float distance = abs(dot(vec4(interaction.p, 1.0), planes[i]));
         if (distance < nearest) {
             nearest = distance;
-            interaction.n = planes[i].xyz;
+            interactionSetNormal(interaction, ray, planes[i].xyz);
         }
     }
     return true;

@@ -32,10 +32,7 @@ bool sphereIntersect(Sphere self, Ray ray, out SurfaceInteraction interaction, f
         }
     }
     interaction.p = rayAt(ray, interaction.t);
-    interaction.n = (interaction.p - self.c) / self.r;
-    if (dot(interaction.n, ray.d) > 0.0) {
-        interaction.n = - interaction.n;
-    }
+    interactionSetNormal(interaction, ray, (interaction.p - self.c) / self.r);
     return true;
 }
 
