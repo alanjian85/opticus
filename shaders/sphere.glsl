@@ -9,6 +9,13 @@ struct Sphere {
     float r;
 };
 
+Sphere sphereInit(vec3 c, float r) {
+    Sphere self;
+    self.c = c;
+    self.r = r;
+    return self;
+}
+
 bool sphereIntersect(Sphere self, Ray ray, out SurfaceInteraction interaction, float tmin, float tmax) {
     vec3 oc = ray.o - self.c;
     float a = dot(ray.d, ray.d);
