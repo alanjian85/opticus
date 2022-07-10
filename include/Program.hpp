@@ -18,6 +18,11 @@ public:
         assert(location != -1);
     }
 
+    const Uniform& operator=(int value) const {
+        glProgramUniform1i(m_program, m_location, value);
+        return *this;
+    }
+
     const Uniform& operator=(float value) const {
         glProgramUniform1f(m_program, m_location, value);
         return *this;

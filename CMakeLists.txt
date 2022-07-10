@@ -7,8 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(deps/glfw)
 add_subdirectory(deps/glm)
 
-add_executable(rtnow 
+add_executable(rtnow
     deps/glad/src/glad.c
+    src/stb.c
     src/main.cpp
     src/ScreenMesh.cpp
 )

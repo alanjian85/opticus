@@ -10,6 +10,7 @@
 #include "Program.hpp"
 #include "ScreenMesh.hpp"
 #include "Camera.hpp"
+#include "Cubemap.hpp"
 
 class Application {
 public:
@@ -47,6 +48,20 @@ public:
         m_program->getUniform("camRight") = m_camera.getRight();
         m_program->getUniform("camUp") = m_camera.getUp();
         m_program->getUniform("camFront") = m_camera.getFront();
+
+        Image rightImage("textures/skybox/right.jpg");
+        Image leftImage("textures/skybox/left.jpg");
+        Image topImage("textures/skybox/top.jpg");
+        Image bottomImage("textures/skybox/bottom.jpg");
+        Image frontImage("textures/skybox/front.jpg");
+        Image backImage("textures/skybox/back.jpg");
+        m_cubemap = Cubemap(rightImage.getWidth(), rightImage.getHeight(), rightImage.getChannels());
+        m_cubemap->setRightFace(rightImage);
+        m_cubemap->setLeftFace(leftImage);
+        m_cubemap->setTopFace(topImage);
+        m_cubemap->setBottomFace(bottomImage);
+        m_cubemap->setFrontFace(frontImage);
+        m_cubemap->setBackFace(backImage);
     }
 
     void loop() {
@@ -63,6 +78,9 @@ public:
             lastTime = currTime;
 
             updateCameraPosition(delta);
+
+            m_cubemap->bindUnit(0);
+            m_program->getUniform("skybox") = 0;
 
             m_program->bind();
             m_screenMesh.draw();
@@ -129,8 +147,9 @@ public:
     }
 private:
     GLFWwindow* m_window;
-    std::optional<Program> m_program;
     ScreenMesh m_screenMesh;
+    std::optional<Program> m_program;
+    std::optional<Cubemap> m_cubemap;
 
     Camera m_camera;
 };

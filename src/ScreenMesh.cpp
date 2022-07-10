@@ -1,12 +1,19 @@
 #include "ScreenMesh.hpp"
 
 #include <algorithm>
+#include <stdexcept>
 
 ScreenMesh::ScreenMesh() {
     glCreateBuffers(1, &m_vbo);
+    if (m_vbo == 0) {
+        throw std::runtime_error("An error occurs while creating the vertex buffer object!");
+    }
     glNamedBufferData(m_vbo, sizeof(s_vertices), s_vertices, GL_STATIC_DRAW);
 
     glCreateVertexArrays(1, &m_vao);
+    if (m_vao == 0) {
+        throw std::runtime_error("An error occurs while creating the vertex array object!");
+    }
     glVertexArrayVertexBuffer(m_vao, 0, m_vbo, 0, sizeof(Vertex));
     glEnableVertexArrayAttrib(m_vao, 0);
     glEnableVertexArrayAttrib(m_vao, 1);
@@ -16,16 +23,16 @@ ScreenMesh::ScreenMesh() {
     glVertexArrayAttribBinding(m_vao, 1, 0);
 }
 
-ScreenMesh::ScreenMesh(ScreenMesh&&) noexcept {
-    m_vao = std::exchange(m_vao, 0);
-    m_vbo = std::exchange(m_vbo, 0);
+ScreenMesh::ScreenMesh(ScreenMesh&& other) noexcept {
+    m_vao = std::exchange(other.m_vao, 0);
+    m_vbo = std::exchange(other.m_vbo, 0);
 }
 
 ScreenMesh& ScreenMesh::operator=(ScreenMesh&& other) noexcept {
     glDeleteVertexArrays(1, &m_vao);
     glDeleteBuffers(1, &m_vbo);
-    m_vao = std::exchange(m_vao, 0);
-    m_vbo = std::exchange(m_vbo, 0);
+    m_vao = std::exchange(other.m_vao, 0);
+    m_vbo = std::exchange(other.m_vbo, 0);
     return *this;
 }
 

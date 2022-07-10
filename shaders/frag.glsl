@@ -11,6 +11,7 @@ uniform vec3 camRight;
 uniform vec3 camUp;
 uniform vec3 camFront;
 uniform vec3 camPos;
+uniform samplerCubeArray skybox;
 
 in vec2 fragTexCoord;
 
@@ -26,8 +27,7 @@ vec3 rayColor(Ray ray) {
     if (sphereIntersect(sphere, ray, interaction, 0.0, FLT_MAX)) {
         return 0.5 * vec3(interaction.n.x + 1.0, interaction.n.y + 1.0, interaction.n.z + 1.0);
     }
-    float t = (ray.d.y + 1.0) * 0.5;
-    return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+    return texture(skybox, vec4(ray.d, 0.0)).rgb;
 }
 
 void main() {
