@@ -23,8 +23,11 @@ bool aabbIntersect(AABB self, Ray ray, out SurfaceInteraction interaction, float
         if (tmax <= tmin)
             return false;
     }
-    interaction.t = tmin;
-    interaction.p = rayAt(ray, tmin);
+    if (tmin > 0)
+        interaction.t = tmin;
+    else
+        interaction.t = tmax;
+    interaction.p = rayAt(ray, interaction.t);
     vec3 dir = interaction.p - (self.pMin + self.pMax) * 0.5;
     if (abs(dir.x) > abs(dir.y) && abs(dir.x) > abs(dir.z)) {
         if (dir.x > 0)
