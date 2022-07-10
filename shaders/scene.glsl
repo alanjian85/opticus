@@ -7,9 +7,9 @@
 #define MAX_OBJECT_NUM 100
 
 struct Scene {
-    int numSphere;
+    uint numSphere;
     Sphere spheres[MAX_OBJECT_NUM];
-    int numAabb;
+    uint numAabb;
     Aabb aabbs[MAX_OBJECT_NUM];
 };
 
@@ -34,14 +34,14 @@ bool sceneIntersect(Scene self, Ray ray, out SurfaceInteraction interaction, flo
     bool intersected = false;
     float nearest = tmax;
     SurfaceInteraction temp;
-    for (int i = 0; i < self.numSphere; ++i) {
+    for (uint i = 0; i < self.numSphere; ++i) {
         if (sphereIntersect(self.spheres[i], ray, temp, tmin, nearest)) {
             intersected = true;
             nearest = temp.t;
             interaction = temp;
         }
     }
-    for (int i = 0; i < self.numAabb; ++i) {
+    for (uint i = 0; i < self.numAabb; ++i) {
         if (aabbIntersect(self.aabbs[i], ray, temp, tmin, nearest)) {
             intersected = true;
             nearest = temp.t;

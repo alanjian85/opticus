@@ -1,7 +1,7 @@
 #ifndef AABB_GLSL
 #define AABB_GLSL
 
-#include "utility.glsl"
+#include "limits.glsl"
 
 struct Aabb {
     vec3 pMin;

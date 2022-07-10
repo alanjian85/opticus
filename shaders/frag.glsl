@@ -3,7 +3,7 @@
 
 #include "/include/ray.glsl"
 #include "/include/scene.glsl"
-#include "/include/utility.glsl"
+#include "/include/random.glsl"
 
 uniform float aspectRatio;
 uniform float fov;
