@@ -35,16 +35,17 @@ float randomFloat(float min, float max) {
     return min + (max - min) * randomFloat();
 }
 
-vec3 randomUnitSphere() {
-    while (true) {
-        vec3 p = vec3(randomFloat(-1.0, 1.0), randomFloat(-1.0, 1.0), randomFloat(-1.0, 1.0));
-        if (dot(p, p) >= 1.0) continue;
-        return p;
-    }
-}
-
 vec3 randomUnitVector() {
     return normalize(vec3(randomFloat(-1.0, 1.0), randomFloat(-1.0, 1.0), randomFloat(-1.0, 1.0)));
+}
+
+vec3 randomHemiSphere(vec3 normal) {
+    vec3 p = randomUnitVector();
+    if (dot(p, normal) > 0.0) {
+        return p;
+    } else {
+        return -p;
+    }
 }
 
 #endif // RANDOM_GLSL

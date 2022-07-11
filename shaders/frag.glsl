@@ -30,7 +30,7 @@ vec3 rayColor(Ray ray, Scene scene, int depth) {
             } else {
                 result *= 0.5;
                 ray.o = interaction.p;
-                ray.d = normalize(interaction.n + randomUnitVector());
+                ray.d = randomHemiSphere(interaction.n);
             }
         } else {
             result *= texture(skybox, vec4(ray.d, 0.0)).rgb;
