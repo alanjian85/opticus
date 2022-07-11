@@ -29,7 +29,8 @@ public:
     }
 
     void init() {
-        m_divisor = 1;
+        m_divisor = 0;
+        m_maxDivisor = 100;
         m_samples = 4;
 
         glEnable(GL_FRAMEBUFFER_SRGB);
@@ -77,7 +78,7 @@ public:
         m_framebuffer->bind();
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        m_divisor = 1;
+        m_divisor = 0;
     }
 
     void loop() {
@@ -94,25 +95,30 @@ public:
             const float delta = currTime - lastTime;
             lastTime = currTime;
 
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ONE, GL_ONE);
-            glEnable(GL_MULTISAMPLE);
-            glEnable(GL_SAMPLE_SHADING);
-            glMinSampleShading(1.0f);
-            m_framebuffer->bind();
-            m_tracerProgram->getUniform("frame") = frame++;
             updateCameraPosition(delta);
-            m_cubemap->bindUnit(0);
-            m_tracerProgram->getUniform("skybox") = 0;
-            m_tracerProgram->bind();
-            m_screenMesh.draw();
+
+            if (m_divisor < m_maxDivisor) {
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_ONE, GL_ONE);
+                glEnable(GL_MULTISAMPLE);
+                glEnable(GL_SAMPLE_SHADING);
+                glMinSampleShading(1.0f);
+                m_framebuffer->bind();
+                m_tracerProgram->getUniform("frame") = frame++;
+                m_cubemap->bindUnit(0);
+                m_tracerProgram->getUniform("skybox") = 0;
+                m_tracerProgram->bind();
+                m_screenMesh.draw();
+                ++m_divisor;
+            }
 
             glDisable(GL_BLEND);
             glDisable(GL_MULTISAMPLE);
+            glDisable(GL_SAMPLE_SHADING);
             Framebuffer::bindDefault();
             m_framebuffer->bindTexture(0, 0);
             m_accumProgram->getUniform("accumBuffer") = 0;
-            m_accumProgram->getUniform("divisor") = m_divisor++;
+            m_accumProgram->getUniform("divisor") = m_divisor;
             m_accumProgram->getUniform("samples") = m_samples;
             m_accumProgram->bind();
             m_screenMesh.draw();
@@ -193,6 +199,7 @@ private:
 
     Camera m_camera;
     int m_divisor;
+    int m_maxDivisor;
     int m_samples;
 };
 
