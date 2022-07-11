@@ -38,6 +38,16 @@ public:
         glDeleteFramebuffers(1, &m_framebuffer);
     }
 
+    void resize(int width, int height) {
+        m_textures.clear();
+        m_textures.emplace_back(width, height);
+        glNamedFramebufferTexture(m_framebuffer, GL_COLOR_ATTACHMENT0, m_textures[0].getTexture(), 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            throw std::runtime_error("The framebuffer is not completed");
+        }
+    }
+
     void bind() {
         glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
     }

@@ -163,6 +163,8 @@ public:
     static void resizeCallback(GLFWwindow* window, int width, int height) {
         Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
         glViewport(0, 0, width, height);
+        self->resetDivisor();
+        self->m_framebuffer->resize(width, height);
         self->m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
     }
 
