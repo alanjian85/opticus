@@ -7,15 +7,14 @@
 
 #include <glad/glad.h>
 
-#include "Texture2D.hpp"
-
 class Framebuffer {
 public:
-    Framebuffer(int width, int height) {
+    Framebuffer(int width, int height, int samples) {
+        m_textures.resize(1);
         glCreateFramebuffers(1, &m_framebuffer);
-
-        m_textures.emplace_back(width, height);
-        glNamedFramebufferTexture(m_framebuffer, GL_COLOR_ATTACHMENT0, m_textures[0].getTexture(), 0);
+        glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, static_cast<GLsizei>(m_textures.size()), m_textures.data());
+        glTextureStorage2DMultisample(m_textures[0], samples, GL_RGB32F, width, height, GL_TRUE);
+        glNamedFramebufferTexture(m_framebuffer, GL_COLOR_ATTACHMENT0, m_textures[0], 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             throw std::runtime_error("The framebuffer is not completed");
@@ -28,6 +27,7 @@ public:
     }
 
     Framebuffer& operator=(Framebuffer&& other) noexcept {
+        glDeleteTextures(static_cast<GLsizei>(m_textures.size()), m_textures.data());
         glDeleteFramebuffers(1, &m_framebuffer);
         m_framebuffer = std::exchange(other.m_framebuffer, 0);
         m_textures = std::move(other.m_textures);
@@ -35,13 +35,15 @@ public:
     }
 
     ~Framebuffer() {
+        glDeleteTextures(static_cast<GLsizei>(m_textures.size()), m_textures.data());
         glDeleteFramebuffers(1, &m_framebuffer);
     }
 
-    void resize(int width, int height) {
-        m_textures.clear();
-        m_textures.emplace_back(width, height);
-        glNamedFramebufferTexture(m_framebuffer, GL_COLOR_ATTACHMENT0, m_textures[0].getTexture(), 0);
+    void resize(int width, int height, int samples) {
+        glDeleteTextures(static_cast<GLsizei>(m_textures.size()), m_textures.data());
+        glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, static_cast<GLsizei>(m_textures.size()), m_textures.data());
+        glTextureStorage2DMultisample(m_textures[0], samples, GL_RGB32F, width, height, GL_TRUE);
+        glNamedFramebufferTexture(m_framebuffer, GL_COLOR_ATTACHMENT0, m_textures[0], 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             throw std::runtime_error("The framebuffer is not completed");
@@ -52,8 +54,8 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
     }
 
-    Texture2D& getTexture(unsigned i) {
-        return m_textures[i];
+    void bindTexture(unsigned int unit, unsigned int attachment) {
+        glBindTextureUnit(unit, m_textures[attachment]);
     }
 
     static void bindDefault() {
@@ -62,7 +64,7 @@ public:
 
 private:
     GLuint m_framebuffer;
-    std::vector<Texture2D> m_textures;
+    std::vector<GLuint> m_textures;
 };
 
 #endif // FRAMEBUFFER_HPP

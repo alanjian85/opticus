@@ -30,12 +30,9 @@ public:
 
     void init() {
         m_divisor = 1;
+        m_samples = 4;
 
         glEnable(GL_FRAMEBUFFER_SRGB);
-        glEnable(GL_MULTISAMPLE);
-        glMinSampleShading(1.0f);
-
-        glBlendFunc(GL_ONE, GL_ONE);
         
         Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
         Shader::includeShader("/include/limits.glsl", readFile("shaders/limits.glsl").c_str());
@@ -55,7 +52,7 @@ public:
         glfwGetFramebufferSize(m_window, &width, &height);
         m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
         m_tracerProgram->getUniform("fov") = 45.0f;
-        m_framebuffer = Framebuffer(width, height);
+        m_framebuffer = Framebuffer(width, height, m_samples);
 
         m_tracerProgram->getUniform("camRight") = m_camera.getRight();
         m_tracerProgram->getUniform("camUp") = m_camera.getUp();
@@ -98,6 +95,10 @@ public:
             lastTime = currTime;
 
             glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE);
+            glEnable(GL_MULTISAMPLE);
+            glEnable(GL_SAMPLE_SHADING);
+            glMinSampleShading(1.0f);
             m_framebuffer->bind();
             m_tracerProgram->getUniform("frame") = frame++;
             updateCameraPosition(delta);
@@ -107,10 +108,12 @@ public:
             m_screenMesh.draw();
 
             glDisable(GL_BLEND);
+            glDisable(GL_MULTISAMPLE);
             Framebuffer::bindDefault();
-            m_framebuffer->getTexture(0).bindUnit(0);
+            m_framebuffer->bindTexture(0, 0);
             m_accumProgram->getUniform("accumBuffer") = 0;
             m_accumProgram->getUniform("divisor") = m_divisor++;
+            m_accumProgram->getUniform("samples") = m_samples;
             m_accumProgram->bind();
             m_screenMesh.draw();
 
@@ -164,7 +167,7 @@ public:
         Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
         glViewport(0, 0, width, height);
         self->resetDivisor();
-        self->m_framebuffer->resize(width, height);
+        self->m_framebuffer->resize(width, height, self->m_samples);
         self->m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
     }
 
@@ -189,7 +192,8 @@ private:
     std::optional<Framebuffer> m_framebuffer;
 
     Camera m_camera;
-    unsigned int m_divisor;
+    int m_divisor;
+    int m_samples;
 };
 
 int main() {
@@ -201,7 +205,6 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 4);
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
