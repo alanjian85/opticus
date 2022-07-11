@@ -11,6 +11,7 @@
 #include "ScreenMesh.hpp"
 #include "Camera.hpp"
 #include "Cubemap.hpp"
+#include "Framebuffer.hpp"
 
 class Application {
 public:
@@ -33,7 +34,7 @@ public:
         glMinSampleShading(1.0f);
 
         glEnable(GL_BLEND);
-        //glBlendFunc(GL_ONE, GL_ONE);
+        glBlendFunc(GL_ONE, GL_ONE);
         
         Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
         Shader::includeShader("/include/limits.glsl", readFile("shaders/limits.glsl").c_str());

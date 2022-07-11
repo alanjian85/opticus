@@ -2,6 +2,7 @@
 #define IMAGE_HPP
 
 #include <algorithm>
+#include <stdexcept>
 
 #include <stb_image.h>
 

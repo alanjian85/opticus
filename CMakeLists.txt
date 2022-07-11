@@ -12,6 +12,10 @@ add_executable(rtnow
     src/stb.c
     src/main.cpp
     src/ScreenMesh.cpp
+    src/Program.cpp
+    src/Cubemap.cpp
+    src/Camera.cpp
+    src/Shader.cpp
 )
 
 target_link_libraries(rtnow PUBLIC
