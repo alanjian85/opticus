@@ -29,9 +29,9 @@ public:
     }
 
     void init() {
-        m_divisor = 0;
-        m_maxDivisor = 100;
-        m_samples = 4;
+        m_samples = 0;
+        m_maxSamples = 1000;
+        m_aaLevel = 4;
 
         glEnable(GL_FRAMEBUFFER_SRGB);
         
@@ -53,7 +53,7 @@ public:
         glfwGetFramebufferSize(m_window, &width, &height);
         m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
         m_tracerProgram->getUniform("fov") = 45.0f;
-        m_framebuffer = Framebuffer(width, height, m_samples);
+        m_framebuffer = Framebuffer(width, height, m_aaLevel);
 
         m_tracerProgram->getUniform("camRight") = m_camera.getRight();
         m_tracerProgram->getUniform("camUp") = m_camera.getUp();
@@ -78,7 +78,7 @@ public:
         m_framebuffer->bind();
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        m_divisor = 0;
+        m_samples = 0;
     }
 
     void loop() {
@@ -97,7 +97,7 @@ public:
 
             updateCameraPosition(delta);
 
-            if (m_divisor < m_maxDivisor) {
+            if (m_samples < m_maxSamples) {
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_ONE, GL_ONE);
                 glEnable(GL_MULTISAMPLE);
@@ -109,7 +109,7 @@ public:
                 m_tracerProgram->getUniform("skybox") = 0;
                 m_tracerProgram->bind();
                 m_screenMesh.draw();
-                ++m_divisor;
+                ++m_samples;
             }
 
             glDisable(GL_BLEND);
@@ -118,8 +118,8 @@ public:
             Framebuffer::bindDefault();
             m_framebuffer->bindTexture(0, 0);
             m_accumProgram->getUniform("accumBuffer") = 0;
-            m_accumProgram->getUniform("divisor") = m_divisor;
             m_accumProgram->getUniform("samples") = m_samples;
+            m_accumProgram->getUniform("aaLevel") = m_aaLevel;
             m_accumProgram->bind();
             m_screenMesh.draw();
 
@@ -173,7 +173,7 @@ public:
         Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
         glViewport(0, 0, width, height);
         self->resetDivisor();
-        self->m_framebuffer->resize(width, height, self->m_samples);
+        self->m_framebuffer->resize(width, height, self->m_aaLevel);
         self->m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
     }
 
@@ -198,9 +198,9 @@ private:
     std::optional<Framebuffer> m_framebuffer;
 
     Camera m_camera;
-    int m_divisor;
-    int m_maxDivisor;
     int m_samples;
+    int m_maxSamples;
+    int m_aaLevel;
 };
 
 int main() {

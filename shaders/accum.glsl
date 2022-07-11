@@ -2,7 +2,7 @@
 
 uniform sampler2DMS accumBuffer;
 uniform int samples;
-uniform int divisor;
+uniform int aaLevel;
 
 in vec2 fragTexCoord;
 
@@ -13,10 +13,10 @@ void main() {
     ivec2 texCoord = ivec2(fragTexCoord * texSize);
 
     vec4 color = vec4(0.0);
-    for (int i = 0; i < samples; ++i) {
+    for (int i = 0; i < aaLevel; ++i) {
         color += texelFetch(accumBuffer, texCoord, i);
     }
-    color /= float(samples);
+    color /= float(aaLevel);
 
-    outColor = vec4(color.rgb / float(divisor), 1.0);
+    outColor = vec4(color.rgb / float(samples), 1.0);
 }
