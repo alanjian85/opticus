@@ -4,7 +4,7 @@
 #include "sphere.glsl"
 #include "aabb.glsl"
 
-#define MAX_OBJECT_NUM 100
+#define MAX_OBJECT_NUM 100u
 
 struct Scene {
     uint numSphere;
