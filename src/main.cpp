@@ -29,11 +29,12 @@ public:
     }
 
     void init() {
+        m_divisor = 1;
+
         glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_MULTISAMPLE);
         glMinSampleShading(1.0f);
 
-        glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         
         Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
@@ -46,16 +47,19 @@ public:
 
         VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
         FragmentShader fragmentShader(readFile("shaders/frag.glsl").c_str());
-        m_program = Program(vertexShader, fragmentShader);
+        FragmentShader accumShader(readFile("shaders/accum.glsl").c_str());
+        m_tracerProgram = Program(vertexShader, fragmentShader);
+        m_accumProgram = Program(vertexShader, accumShader);
 
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
-        m_program->getUniform("aspectRatio") = static_cast<float>(width) / height;
-        m_program->getUniform("fov") = 45.0f;
+        m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
+        m_tracerProgram->getUniform("fov") = 45.0f;
+        m_framebuffer = Framebuffer(width, height);
 
-        m_program->getUniform("camRight") = m_camera.getRight();
-        m_program->getUniform("camUp") = m_camera.getUp();
-        m_program->getUniform("camFront") = m_camera.getFront();
+        m_tracerProgram->getUniform("camRight") = m_camera.getRight();
+        m_tracerProgram->getUniform("camUp") = m_camera.getUp();
+        m_tracerProgram->getUniform("camFront") = m_camera.getFront();
 
         Image rightImage("textures/skybox/right.jpg");
         Image leftImage("textures/skybox/left.jpg");
@@ -72,6 +76,13 @@ public:
         m_cubemap->setBackFace(backImage);
     }
 
+    void resetDivisor() {
+        m_framebuffer->bind();
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        m_divisor = 1;
+    }
+
     void loop() {
         float lastTime = static_cast<float>(glfwGetTime());
         unsigned int frame = 0;
@@ -85,14 +96,22 @@ public:
             const float currTime = static_cast<float>(glfwGetTime());
             const float delta = currTime - lastTime;
             lastTime = currTime;
-            m_program->getUniform("frame") = frame++;
 
+            glEnable(GL_BLEND);
+            m_framebuffer->bind();
+            m_tracerProgram->getUniform("frame") = frame++;
             updateCameraPosition(delta);
-
             m_cubemap->bindUnit(0);
-            m_program->getUniform("skybox") = 0;
+            m_tracerProgram->getUniform("skybox") = 0;
+            m_tracerProgram->bind();
+            m_screenMesh.draw();
 
-            m_program->bind();
+            glDisable(GL_BLEND);
+            Framebuffer::bindDefault();
+            m_framebuffer->getTexture(0).bindUnit(0);
+            m_accumProgram->getUniform("accumBuffer") = 0;
+            m_accumProgram->getUniform("divisor") = m_divisor++;
+            m_accumProgram->bind();
             m_screenMesh.draw();
 
             glfwSwapBuffers(m_window);
@@ -110,9 +129,9 @@ public:
 
         m_camera.setPitch(std::clamp(m_camera.getPitch(), -89.0f, 89.0f));
 
-        m_program->getUniform("camRight") = m_camera.getRight();
-        m_program->getUniform("camUp") = m_camera.getUp();
-        m_program->getUniform("camFront") = m_camera.getFront();
+        m_tracerProgram->getUniform("camRight") = m_camera.getRight();
+        m_tracerProgram->getUniform("camUp") = m_camera.getUp();
+        m_tracerProgram->getUniform("camFront") = m_camera.getFront();
     }
 
     void updateCameraPosition(float delta) {
@@ -120,28 +139,31 @@ public:
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_TRUE) {
             m_camera.pos += m_camera.getFront() * speed * delta;
-
+            resetDivisor();
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_TRUE) {
             m_camera.pos -= m_camera.getFront() * speed * delta;
+            resetDivisor();
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_TRUE) {
             m_camera.pos += m_camera.getRight() * speed * delta;
+            resetDivisor();
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_TRUE) {
             m_camera.pos -= m_camera.getRight() * speed * delta;
+            resetDivisor();
         }
 
-        m_program->getUniform("camPos") = m_camera.pos;
+        m_tracerProgram->getUniform("camPos") = m_camera.pos;
     }
 
     static void resizeCallback(GLFWwindow* window, int width, int height) {
         Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
         glViewport(0, 0, width, height);
-        self->m_program->getUniform("aspectRatio") = static_cast<float>(width) / height;
+        self->m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
     }
 
     static void cursorCallback(GLFWwindow* window, double xpos, double ypos) {
@@ -149,7 +171,8 @@ public:
         
         Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
         float xoffset = static_cast<float>(xpos - lastx), yoffset = static_cast<float>(lasty - ypos);
-
+        
+        self->resetDivisor();
         self->updateCameraDirection(xoffset, yoffset);
 
         lastx = xpos;
@@ -158,10 +181,13 @@ public:
 private:
     GLFWwindow* m_window;
     ScreenMesh m_screenMesh;
-    std::optional<Program> m_program;
+    std::optional<Program> m_tracerProgram;
+    std::optional<Program> m_accumProgram;
     std::optional<Cubemap> m_cubemap;
+    std::optional<Framebuffer> m_framebuffer;
 
     Camera m_camera;
+    unsigned int m_divisor;
 };
 
 int main() {
@@ -173,11 +199,11 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 100);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Ray Tracing Now!", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1024, 720, "Ray Tracing Now!", nullptr, nullptr);
     if (!window) {
         std::cerr << "Failed to create window\n";
         return 1;
