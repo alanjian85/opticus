@@ -18,7 +18,6 @@ in vec2 fragTexCoord;
 
 out vec4 outColor;
 
-// the direction of the ray is required to be normalized
 // TODO: Support transparent object
 vec3 rayColor(Ray ray, Scene scene, int depth) {
     vec3 result = vec3(1.0, 1.0, 1.0);
@@ -30,7 +29,7 @@ vec3 rayColor(Ray ray, Scene scene, int depth) {
             } else {
                 result *= 0.5;
                 ray.o = interaction.p;
-                ray.d = normalize(randomHemiSphere(interaction.n) + reflect(ray.d, interaction.n) * 0.5);
+                ray.d = normalize(randomHemiSphere(interaction.n));
             }
         } else {
             result *= texture(skybox, vec4(ray.d, 0.0)).rgb;
