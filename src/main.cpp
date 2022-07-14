@@ -12,6 +12,7 @@
 #include "Camera.hpp"
 #include "Cubemap.hpp"
 #include "Framebuffer.hpp"
+#include "shader_list.h"
 
 class Application {
 public:
@@ -35,13 +36,12 @@ public:
 
         glEnable(GL_FRAMEBUFFER_SRGB);
         
-        Shader::includeShader("/include/ray.glsl", readFile("shaders/ray.glsl").c_str());
-        Shader::includeShader("/include/limits.glsl", readFile("shaders/limits.glsl").c_str());
-        Shader::includeShader("/include/random.glsl", readFile("shaders/random.glsl").c_str());
-        Shader::includeShader("/include/shape.glsl", readFile("shaders/shape.glsl").c_str());
-        Shader::includeShader("/include/sphere.glsl", readFile("shaders/sphere.glsl").c_str());
-        Shader::includeShader("/include/aabb.glsl", readFile("shaders/aabb.glsl").c_str());
-        Shader::includeShader("/include/scene.glsl", readFile("shaders/scene.glsl").c_str());
+        for (const char* header : shaderHeaders) {
+            Shader::includeShader(
+                (std::string("/include/") + header).c_str(),
+                readFile((std::string("shaders/") + header).c_str()).c_str()
+            );
+        }
 
         VertexShader vertexShader(readFile("shaders/vert.glsl").c_str());
         FragmentShader fragmentShader(readFile("shaders/frag.glsl").c_str());
