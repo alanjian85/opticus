@@ -1,7 +1,7 @@
 #ifndef RANDOM_GLSL
 #define RANDOM_GLSL
 
-#include "limits.glsl"
+#include "/include/limits.glsl"
 
 #define RAND_MAX UINT_MAX
 

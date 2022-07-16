@@ -31,8 +31,8 @@ public:
 
     void init() {
         m_samples = 0;
-        m_maxSamples = INT_MAX;
-        m_aaLevel = 16;
+        m_maxSamples = 1000;
+        m_aaLevel = 4;
 
         glEnable(GL_FRAMEBUFFER_SRGB);
         
