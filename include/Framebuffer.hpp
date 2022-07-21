@@ -9,11 +9,11 @@
 
 class Framebuffer {
 public:
-    Framebuffer(int width, int height, int samples) {
+    Framebuffer(int width, int height) {
         m_textures.resize(1);
         glCreateFramebuffers(1, &m_framebuffer);
-        glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, static_cast<GLsizei>(m_textures.size()), m_textures.data());
-        glTextureStorage2DMultisample(m_textures[0], samples, GL_RGB32F, width, height, GL_TRUE);
+        glCreateTextures(GL_TEXTURE_2D, static_cast<GLsizei>(m_textures.size()), m_textures.data());
+        glTextureStorage2D(m_textures[0], 1, GL_RGB32F, width, height);
         glNamedFramebufferTexture(m_framebuffer, GL_COLOR_ATTACHMENT0, m_textures[0], 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -39,10 +39,10 @@ public:
         glDeleteFramebuffers(1, &m_framebuffer);
     }
 
-    void resize(int width, int height, int samples) {
+    void resize(int width, int height) {
         glDeleteTextures(static_cast<GLsizei>(m_textures.size()), m_textures.data());
-        glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, static_cast<GLsizei>(m_textures.size()), m_textures.data());
-        glTextureStorage2DMultisample(m_textures[0], samples, GL_RGB32F, width, height, GL_TRUE);
+        glCreateTextures(GL_TEXTURE_2D, static_cast<GLsizei>(m_textures.size()), m_textures.data());
+        glTextureStorage2D(m_textures[0], 1, GL_RGB32F, width, height);
         glNamedFramebufferTexture(m_framebuffer, GL_COLOR_ATTACHMENT0, m_textures[0], 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {

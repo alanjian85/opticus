@@ -31,8 +31,7 @@ public:
 
     void init() {
         m_samples = 0;
-        m_maxSamples = 1000;
-        m_aaLevel = 4;
+        m_maxSamples = INT_MAX;
 
         glEnable(GL_FRAMEBUFFER_SRGB);
         
@@ -52,8 +51,10 @@ public:
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
         m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
+        m_tracerProgram->getUniform("screenWidth") = width;
+        m_tracerProgram->getUniform("screenHeight") = height;
         m_tracerProgram->getUniform("fov") = 45.0f;
-        m_framebuffer = Framebuffer(width, height, m_aaLevel);
+        m_framebuffer = Framebuffer(width, height);
 
         m_tracerProgram->getUniform("camRight") = m_camera.getRight();
         m_tracerProgram->getUniform("camUp") = m_camera.getUp();
@@ -100,9 +101,6 @@ public:
             if (m_samples < m_maxSamples) {
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_ONE, GL_ONE);
-                glEnable(GL_MULTISAMPLE);
-                glEnable(GL_SAMPLE_SHADING);
-                glMinSampleShading(1.0f);
                 m_framebuffer->bind();
                 m_tracerProgram->getUniform("frame") = frame++;
                 m_cubemap->bindUnit(0);
@@ -113,13 +111,10 @@ public:
             }
 
             glDisable(GL_BLEND);
-            glDisable(GL_MULTISAMPLE);
-            glDisable(GL_SAMPLE_SHADING);
             Framebuffer::bindDefault();
             m_framebuffer->bindTexture(0, 0);
             m_accumProgram->getUniform("accumBuffer") = 0;
             m_accumProgram->getUniform("samples") = m_samples;
-            m_accumProgram->getUniform("aaLevel") = m_aaLevel;
             m_accumProgram->bind();
             m_screenMesh.draw();
 
@@ -173,8 +168,10 @@ public:
         Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
         glViewport(0, 0, width, height);
         self->resetDivisor();
-        self->m_framebuffer->resize(width, height, self->m_aaLevel);
+        self->m_framebuffer->resize(width, height);
         self->m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
+        self->m_tracerProgram->getUniform("screenWidth") = width;
+        self->m_tracerProgram->getUniform("screenHeight") = height;
     }
 
     static void cursorCallback(GLFWwindow* window, double xpos, double ypos) {
@@ -200,7 +197,6 @@ private:
     Camera m_camera;
     int m_samples;
     int m_maxSamples;
-    int m_aaLevel;
 };
 
 int main() {
