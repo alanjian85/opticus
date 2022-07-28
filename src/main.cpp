@@ -2,6 +2,9 @@
 #include <stdexcept>
 #include <optional>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -13,6 +16,12 @@
 #include "Cubemap.hpp"
 #include "Framebuffer.hpp"
 #include "shader_list.h"
+
+#ifdef _WIN32
+extern "C" {
+    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+#endif
 
 class Application {
 public:
