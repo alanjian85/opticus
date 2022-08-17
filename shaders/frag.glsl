@@ -1,9 +1,9 @@
 #version 450 core
 #extension GL_ARB_shading_language_include : require
 
-#include "/include/ray.glsl"
-#include "/include/scene.glsl"
-#include "/include/random.glsl"
+#include "/include/core/ray.glsl"
+#include "/include/core/scene.glsl"
+#include "/include/core/random.glsl"
 
 uniform float aspectRatio;
 uniform int screenWidth;

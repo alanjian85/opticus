@@ -1,8 +1,8 @@
 #ifndef SCENE_GLSL
 #define SCENE_GLSL
 
-#include "/include/sphere.glsl"
-#include "/include/aabb.glsl"
+#include "/include/shapes/sphere.glsl"
+#include "/include/shapes/aabb.glsl"
 
 #define MAX_OBJECT_NUM 100u
 

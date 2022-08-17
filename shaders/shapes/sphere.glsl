@@ -1,8 +1,8 @@
 #ifndef SPHERE_GLSL
 #define SPHERE_GLSL
 
-#include "/include/ray.glsl"
-#include "/include/shape.glsl"
+#include "/include/core/ray.glsl"
+#include "/include/core/shape.glsl"
 
 struct Sphere {
     vec3 c;

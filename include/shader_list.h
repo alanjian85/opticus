@@ -2,13 +2,13 @@
 #define SHADER_LIST_H
 
 const char* const shaderHeaders[] = {
-    "ray.glsl",
-    "limits.glsl",
-    "random.glsl",
-    "shape.glsl", 
-    "sphere.glsl",
-    "aabb.glsl",
-    "scene.glsl" 
+    "core/ray.glsl",
+    "core/limits.glsl",
+    "core/random.glsl",
+    "core/shape.glsl", 
+    "core/scene.glsl",
+    "shapes/sphere.glsl",
+    "shapes/aabb.glsl"
 };
 
 #endif // SHADER_LIST_H

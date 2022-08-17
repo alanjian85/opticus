@@ -1,7 +1,7 @@
 #ifndef SHAPE_GLSL
 #define SHAPE_GLSL
 
-#include "/include/ray.glsl"
+#include "/include/core/ray.glsl"
 
 struct SurfaceInteraction {
     float t;
