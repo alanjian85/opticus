@@ -5,6 +5,7 @@ const char* const shaderHeaders[] = {
     "core/ray.glsl",
     "core/limits.glsl",
     "core/random.glsl",
+    "core/utility.glsl",
     "core/shape.glsl", 
     "core/material.glsl",
     "core/scene.glsl",

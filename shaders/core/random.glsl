@@ -52,4 +52,9 @@ vec3 randomHemiSphere(vec3 normal) {
     }
 }
 
+vec3 randomUnitVector() {
+    vec3 p = randomUnitSphere();
+    return normalize(p);
+}
+
 #endif // RANDOM_GLSL

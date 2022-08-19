@@ -59,9 +59,16 @@ void main() {
     randomInit();
 
     Scene scene = sceneInit();
-    sceneAddSphere(scene, sphereInit(vec3(0.0, 0.0, -1.0), 0.5));
-    sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0));
-    sceneAddAabb(scene, aabbInit(vec3(-1.75, -0.5, -0.5), vec3(-0.75, 0.5, -1.5)));
+
+    Lambertian materialGround = lambertianInit(vec3(0.8, 0.8, 0.0));
+    Lambertian materialCenter = lambertianInit(vec3(0.7, 0.3, 0.3));
+    Metal materialLeft = metalInit(vec3(0.8, 0.8, 0.8));
+    Metal materialRight = metalInit(vec3(0.8, 0.6, 0.2));
+
+    sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0)), materialGround);
+    sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3(0.0,    0.0, -1.0), 0.5)), materialCenter);
+    sceneBindMetal(scene, sceneAddSphere(scene, sphereInit(vec3(-1.0, 0.0, -1.0), 0.5)), materialLeft);
+    sceneBindMetal(scene, sceneAddSphere(scene, sphereInit(vec3( 1.0, 0.0, -1.0), 0.5)), materialRight);
 
     vec3 color = vec3(0.0, 0.0, 0.0);
     for (uint i = 0; i < samples; ++i) {
