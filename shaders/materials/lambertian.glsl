@@ -21,7 +21,7 @@ bool lambertianScatter(Lambertian self, Ray ray, SurfaceInteraction interaction,
     if (nearZero(scattered_dir)) {
         scattered_dir = interaction.n;
     }
-    scattered = rayInit(interaction.p, scattered_dir);
+    scattered = rayInit(interaction.p, normalize(scattered_dir));
     attenuation = self.albedo;
     return true;
 }

@@ -16,8 +16,8 @@ Metal metalInit(vec3 albedo, float fuzz) {
 bool metalScatter(Metal self, Ray ray, SurfaceInteraction interaction, 
                   out vec3 attenuation, out Ray scattered)
 {
-    vec3 reflected = reflect(normalize(ray.d), interaction.n);
-    scattered = rayInit(interaction.p, reflected + self.fuzz * randomUnitSphere());
+    vec3 reflected = reflect(ray.d, interaction.n);
+    scattered = rayInit(interaction.p, normalize(reflected + self.fuzz * randomUnitSphere()));
     attenuation = self.albedo;
     return dot(reflected, interaction.n) > 0.0;
 }

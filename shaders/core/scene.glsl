@@ -5,6 +5,7 @@
 #include "/include/shapes/aabb.glsl"
 #include "/include/materials/lambertian.glsl"
 #include "/include/materials/metal.glsl"
+#include "/include/materials/dielectric.glsl"
 
 #define MAX_OBJECT_NUM 100u
 
@@ -22,6 +23,8 @@ struct Scene {
     Lambertian lambertians[MAX_OBJECT_NUM];
     uint numMetal;
     Metal metals[MAX_OBJECT_NUM];
+    uint numDielectric;
+    Dielectric dielectrics[MAX_OBJECT_NUM];
 };
 
 Scene sceneInit() {
@@ -63,6 +66,12 @@ void sceneBindMetal(inout Scene self, uint index, Metal metal) {
     self.numMetal++;
 }
 
+void sceneBindDielectric(inout Scene self, uint index, Dielectric dielectric) {
+    self.materials[index] = 2 << 16 | self.numDielectric;
+    self.dielectrics[self.numDielectric] = dielectric;
+    self.numDielectric++;
+}
+
 bool sceneObjectIntersect(Scene self, uint object, Ray ray, out SurfaceInteraction interaction, float tmin, float tmax) {
     switch (object >> 16) {
         case 0x0000:
@@ -78,6 +87,8 @@ bool sceneMaterialScatter(Scene self, uint material, Ray ray, SurfaceInteraction
             return lambertianScatter(self.lambertians[material & 0xFFFF], ray, interaction, attenuation, scattered);
         case 0x0001:
             return metalScatter(self.metals[material & 0xFFFF], ray, interaction, attenuation, scattered);
+        case 0x0002:
+            return dielectricScatter(self.dielectrics[material & 0xFFFF], ray, interaction, attenuation, scattered);
     }
 }
 

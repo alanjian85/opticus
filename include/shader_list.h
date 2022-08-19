@@ -12,7 +12,8 @@ const char* const shaderHeaders[] = {
     "shapes/sphere.glsl",
     "shapes/aabb.glsl",
     "materials/lambertian.glsl",
-    "materials/metal.glsl"
+    "materials/metal.glsl",
+    "materials/dielectric.glsl",
 };
 
 #endif // SHADER_LIST_H
