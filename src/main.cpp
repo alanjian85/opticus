@@ -27,6 +27,7 @@ class Application {
 public:
     Application(GLFWwindow* window) {
         m_window = window;
+        m_camera.pos = glm::vec3(0.0f, 0.0f, 3.0f);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetWindowUserPointer(window, this);
         glfwSetFramebufferSizeCallback(window, resizeCallback);

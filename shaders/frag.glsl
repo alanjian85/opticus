@@ -61,14 +61,15 @@ void main() {
     Scene scene = sceneInit();
 
     Lambertian materialGround = lambertianInit(vec3(0.8, 0.8, 0.0));
-    Dielectric materialCenter = dielectricInit(1.5);
+    Metal materialCenter = metalInit(vec3(0.8, 0.6, 0.2), 0.0);
     Dielectric materialLeft = dielectricInit(1.5);
-    Metal materialRight = metalInit(vec3(0.8, 0.6, 0.2), 1.0);
+    Lambertian materialRight = lambertianInit(vec3(0.1, 0.2, 0.5));
 
     sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0)), materialGround);
-    sceneBindDielectric(scene, sceneAddAabb(scene, aabbInit(vec3(-0.5, -0.5, -1.5), vec3( 0.5, 0.5, -0.5))), materialCenter);
+    sceneBindMetal(scene, sceneAddAabb(scene, aabbInit(vec3(-0.5, -0.5, -1.5), vec3( 0.5, 0.5, -0.5))), materialCenter);
     sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.0, 0.0, -1.0), 0.5)), materialLeft);
-    sceneBindMetal(scene, sceneAddSphere(scene, sphereInit(vec3( 1.0, 0.0, -1.0), 0.5)), materialRight);
+    sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.0, 0.0, -1.0), -0.4)), materialLeft);
+    sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3( 1.0, 0.0, -1.0), 0.5)), materialRight);
 
     vec3 color = vec3(0.0, 0.0, 0.0);
     for (uint i = 0; i < samples; ++i) {
