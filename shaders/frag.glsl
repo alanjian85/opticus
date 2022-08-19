@@ -20,7 +20,7 @@ in vec2 fragTexCoord;
 
 out vec4 outColor;
 
-// TODO: Support transparent object
+// TODO: Support transparent objects
 vec3 rayColor(Ray ray, Scene scene, int depth) {
     vec3 result = vec3(1.0, 1.0, 1.0);
     while (depth > 0) {
@@ -29,9 +29,15 @@ vec3 rayColor(Ray ray, Scene scene, int depth) {
             if (depth == 1) {
                 result = vec3(0.0, 0.0, 0.0);
             } else {
-                result *= 0.5;
-                ray.o = interaction.p;
-                ray.d = normalize(randomHemiSphere(interaction.n));
+                Ray scattered;
+                vec3 attenuation;
+                if (sceneMaterialScatter(scene, interaction.mat, ray, interaction, attenuation, scattered)) {
+                    result *= attenuation;
+                    ray = scattered;
+                } else {
+                    result = vec3(0.0, 0.0, 0.0);
+                    break;
+                }
             }
         } else {
             result *= texture(skybox, vec4(ray.d, 0.0)).rgb;

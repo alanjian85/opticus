@@ -6,9 +6,12 @@ const char* const shaderHeaders[] = {
     "core/limits.glsl",
     "core/random.glsl",
     "core/shape.glsl", 
+    "core/material.glsl",
     "core/scene.glsl",
     "shapes/sphere.glsl",
-    "shapes/aabb.glsl"
+    "shapes/aabb.glsl",
+    "materials/lambertian.glsl",
+    "materials/metal.glsl"
 };
 
 #endif // SHADER_LIST_H

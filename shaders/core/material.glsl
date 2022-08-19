@@ -1,0 +1,4 @@
+#ifndef MATERIAL_GLSL
+#define MATERIAL_GLSL
+
+#endif // MATERIAL_GLSL

@@ -3,47 +3,81 @@
 
 #include "/include/shapes/sphere.glsl"
 #include "/include/shapes/aabb.glsl"
+#include "/include/materials/lambertian.glsl"
+#include "/include/materials/metal.glsl"
 
 #define MAX_OBJECT_NUM 100u
 
 struct Scene {
     uint numObject;
     uint objects[MAX_OBJECT_NUM];
+    uint materials[MAX_OBJECT_NUM];
 
     uint numSphere;
     Sphere spheres[MAX_OBJECT_NUM];
     uint numAabb;
     Aabb aabbs[MAX_OBJECT_NUM];
+
+    uint numLambertian;
+    Lambertian lambertians[MAX_OBJECT_NUM];
+    uint numMetal;
+    Metal metals[MAX_OBJECT_NUM];
 };
 
 Scene sceneInit() {
     Scene self;
     self.numObject = 0;
+
     self.numSphere = 0;
     self.numAabb = 0;
+    
+    self.numLambertian = 0;
+    self.numMetal = 0;
+
     return self;
 }
 
-void sceneAddSphere(inout Scene self, Sphere sphere) {
+uint sceneAddSphere(inout Scene self, Sphere sphere) {
     self.objects[self.numObject] = 0 << 16 | self.numSphere;
-    ++self.numObject;
     self.spheres[self.numSphere] = sphere;
-    ++self.numSphere;
+    self.numSphere++;
+    return self.numObject++;
 }
 
-void sceneAddAabb(inout Scene self, Aabb aabb) {
+uint sceneAddAabb(inout Scene self, Aabb aabb) {
     self.objects[self.numObject] = 1 << 16 | self.numAabb;
-    ++self.numObject;
     self.aabbs[self.numAabb] = aabb;
     ++self.numAabb;
+    return self.numObject++;
+}
+
+void sceneBindLambertian(inout Scene self, uint index, Lambertian lambertian) {
+    self.materials[index] = 0 << 16 | self.numLambertian;
+    self.lambertians[self.numLambertian] = lambertian;
+    self.numLambertian++;
+}
+
+void sceneBindMetal(inout Scene self, uint index, Metal metal) {
+    self.materials[index] = 1 << 16 | self.numMetal;
+    self.metals[self.numMetal] = metal;
+    self.numMetal++;
 }
 
 bool sceneObjectIntersect(Scene self, uint object, Ray ray, out SurfaceInteraction interaction, float tmin, float tmax) {
     switch (object >> 16) {
         case 0x0000:
-            return sphereIntersect(self.spheres[object & 0x0000FFFF], ray, interaction, tmin, tmax);
+            return sphereIntersect(self.spheres[object & 0xFFFF], ray, interaction, tmin, tmax);
         case 0x0001:
-            return aabbIntersect(self.aabbs[object & 0x0000FFFF], ray, interaction, tmin, tmax);
+            return aabbIntersect(self.aabbs[object & 0xFFFF], ray, interaction, tmin, tmax);
+    }
+}
+
+bool sceneMaterialScatter(Scene self, uint material, Ray ray, SurfaceInteraction interaction, out vec3 attenuation, out Ray scattered) {
+    switch (material >> 16) {
+        case 0x0000:
+            return lambertianScatter(self.lambertians[material & 0xFFFF], ray, interaction, attenuation, scattered);
+        case 0x0001:
+            return metalScatter(self.metals[material & 0xFFFF], ray, interaction, attenuation, scattered);
     }
 }
 
@@ -56,6 +90,7 @@ bool sceneIntersect(Scene self, Ray ray, out SurfaceInteraction interaction, flo
             intersected = true;
             nearest = temp.t;
             interaction = temp;
+            interaction.mat = self.materials[i];
         }
     }
     return intersected;
