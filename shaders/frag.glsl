@@ -67,7 +67,7 @@ void main() {
 
     sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0)), materialGround);
     sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3(0.0,    0.0, -1.0), 0.5)), materialCenter);
-    sceneBindMetal(scene, sceneAddSphere(scene, sphereInit(vec3(-1.0, 0.0, -1.0), 0.5)), materialLeft);
+    sceneBindMetal(scene, sceneAddAabb(scene, aabbInit(vec3(-1.5, -0.5, -1.5), vec3(-0.5, 0.5, -0.5))), materialLeft);
     sceneBindMetal(scene, sceneAddSphere(scene, sphereInit(vec3( 1.0, 0.0, -1.0), 0.5)), materialRight);
 
     vec3 color = vec3(0.0, 0.0, 0.0);
@@ -82,4 +82,10 @@ void main() {
         color += rayColor(ray, scene, 50);
     }
     outColor = vec4(color / float(samples), 1.0);
+
+    // https://www.shadertoy.com/view/lsKSWR
+    vec2 uv = fragTexCoord;
+    uv *= 1.0 - uv.yx;
+    float vignette = pow(uv.x * uv.y * 15.0, 0.25);
+    outColor.rgb *= vignette;
 }
