@@ -32,6 +32,7 @@ public:
         glfwSetWindowUserPointer(window, this);
         glfwSetFramebufferSizeCallback(window, resizeCallback);
         glfwSetCursorPosCallback(window, cursorCallback);
+        glfwSetScrollCallback(window, scrollCallback);
     }
 
     ~Application() {
@@ -63,12 +64,12 @@ public:
         m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
         m_tracerProgram->getUniform("screenWidth") = width;
         m_tracerProgram->getUniform("screenHeight") = height;
-        m_tracerProgram->getUniform("fov") = 90.0f;
         m_framebuffer = Framebuffer(width, height);
 
         m_tracerProgram->getUniform("camRight") = m_camera.getRight();
         m_tracerProgram->getUniform("camUp") = m_camera.getUp();
         m_tracerProgram->getUniform("camFront") = m_camera.getFront();
+        m_tracerProgram->getUniform("fov") = m_camera.getFov();
 
         Image rightImage("textures/skybox/right.jpg");
         Image leftImage("textures/skybox/left.jpg");
@@ -85,7 +86,7 @@ public:
         m_cubemap->setBackFace(backImage);
     }
 
-    void resetDivisor() {
+    void resetSamples() {
         m_framebuffer->bind();
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -153,22 +154,22 @@ public:
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_TRUE) {
             m_camera.pos += m_camera.getFront() * speed * delta;
-            resetDivisor();
+            resetSamples();
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_TRUE) {
             m_camera.pos -= m_camera.getFront() * speed * delta;
-            resetDivisor();
+            resetSamples();
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_TRUE) {
             m_camera.pos += m_camera.getRight() * speed * delta;
-            resetDivisor();
+            resetSamples();
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_TRUE) {
             m_camera.pos -= m_camera.getRight() * speed * delta;
-            resetDivisor();
+            resetSamples();
         }
 
         m_tracerProgram->getUniform("camPos") = m_camera.pos;
@@ -177,7 +178,7 @@ public:
     static void resizeCallback(GLFWwindow* window, int width, int height) {
         Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
         glViewport(0, 0, width, height);
-        self->resetDivisor();
+        self->resetSamples();
         self->m_framebuffer->resize(width, height);
         self->m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
         self->m_tracerProgram->getUniform("screenWidth") = width;
@@ -190,11 +191,23 @@ public:
         Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
         float xoffset = static_cast<float>(xpos - lastx), yoffset = static_cast<float>(lasty - ypos);
         
-        self->resetDivisor();
+        self->resetSamples();
         self->updateCameraDirection(xoffset, yoffset);
 
         lastx = xpos;
         lasty = ypos;
+    }
+
+    static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+        Application* self = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
+        
+        if (yoffset) {
+            float fov = self->m_camera.getFov() - static_cast<float>(yoffset) * 2.5f;
+            fov = glm::clamp(fov, 20.0f, 100.0f);
+            self->m_camera.setFov(fov);
+            self->m_tracerProgram->getUniform("fov") = self->m_camera.getFov();
+            self->resetSamples();
+        }
     }
 private:
     GLFWwindow* m_window;
