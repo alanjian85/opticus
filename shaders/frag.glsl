@@ -50,11 +50,12 @@ vec3 rayColor(Ray ray, Scene scene, int depth) {
 
 void main() {
     const uint samples = 4;
-    const float viewportHeight = 2.0;
 
     const float u = fragTexCoord.x, v = fragTexCoord.y;
-    const float focalLength = 0.5 / tan(radians(fov) * 0.5);
-    const float viewportWidth = aspectRatio * viewportHeight;
+    const float focalLength = 1.0;
+    const float t = tan(radians(fov) * 0.5);
+    const float viewportHeight = 2.0 * t;
+    const float viewportWidth = 2.0 * t * aspectRatio;
 
     randomInit();
 

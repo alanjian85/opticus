@@ -36,6 +36,7 @@ Scene sceneInit() {
     
     self.numLambertian = 0;
     self.numMetal = 0;
+    self.numDielectric = 0;
 
     return self;
 }

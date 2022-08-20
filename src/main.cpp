@@ -63,7 +63,7 @@ public:
         m_tracerProgram->getUniform("aspectRatio") = static_cast<float>(width) / height;
         m_tracerProgram->getUniform("screenWidth") = width;
         m_tracerProgram->getUniform("screenHeight") = height;
-        m_tracerProgram->getUniform("fov") = 45.0f;
+        m_tracerProgram->getUniform("fov") = 90.0f;
         m_framebuffer = Framebuffer(width, height);
 
         m_tracerProgram->getUniform("camRight") = m_camera.getRight();
