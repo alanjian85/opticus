@@ -7,12 +7,14 @@
 struct Sphere {
     vec3 c;
     float r;
+    bool reverse;
 };
 
-Sphere sphereInit(vec3 c, float r) {
+Sphere sphereInit(vec3 c, float r, bool reverse = false) {
     Sphere self;
     self.c = c;
     self.r = r;
+    self.reverse = reverse;
     return self;
 }
 
@@ -32,7 +34,8 @@ bool sphereIntersect(Sphere self, Ray ray, out SurfaceInteraction interaction, f
         }
     }
     interaction.p = rayAt(ray, interaction.t);
-    interactionSetNormal(interaction, ray, (interaction.p - self.c) / self.r);
+    vec3 normal = (interaction.p - self.c) / self.r;
+    interactionSetNormal(interaction, ray, self.reverse ? -normal : normal);
     return true;
 }
 

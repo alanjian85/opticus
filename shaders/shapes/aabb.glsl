@@ -6,12 +6,14 @@
 struct Aabb {
     vec3 pMin;
     vec3 pMax;
+    bool reverse;
 };
 
-Aabb aabbInit(vec3 p1, vec3 p2) {
+Aabb aabbInit(vec3 p1, vec3 p2, bool reverse = false) {
     Aabb self;
     self.pMin = min(p1, p2);
     self.pMax = max(p1, p2);
+    self.reverse = reverse;
     return self;
 }
 
@@ -45,7 +47,8 @@ bool aabbIntersect(Aabb self, Ray ray, out SurfaceInteraction interaction, float
         float distance = abs(dot(vec4(interaction.p, 1.0), planes[i]));
         if (distance < nearest) {
             nearest = distance;
-            interactionSetNormal(interaction, ray, planes[i].xyz);
+            vec3 normal = planes[i].xyz;
+            interactionSetNormal(interaction, ray, self.reverse ? -normal : normal);
         }
     }
     return true;
