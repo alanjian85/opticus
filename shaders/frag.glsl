@@ -68,8 +68,8 @@ void main() {
 
     sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0)), materialGround);
     sceneBindMetal(scene, sceneAddAabb(scene, aabbInit(vec3(-0.5, -0.5, -1.5), vec3( 0.5, 0.5, -0.5))), materialCenter);
-    sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.0, 0.0, -1.0), 0.5)), materialLeft);
-    sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.0, 0.0, -1.0), 0.4, true)), materialLeft);
+    sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.01, 0.0, -1.0), 0.5)), materialLeft);
+    sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.01, 0.0, -1.0), 0.4, true)), materialLeft);
     sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3( 1.0, 0.0, -1.0), 0.5)), materialRight);
 
     vec3 color = vec3(0.0, 0.0, 0.0);
