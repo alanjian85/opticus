@@ -1,6 +1,6 @@
 #include "ScreenMesh.hpp"
 
-#include <algorithm>
+#include <utility>
 #include <stdexcept>
 
 ScreenMesh::ScreenMesh() {

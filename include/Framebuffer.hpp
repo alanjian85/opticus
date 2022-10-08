@@ -1,9 +1,9 @@
 #ifndef FRAMEBUFFER_HPP
 #define FRAMEBUFFER_HPP
 
-#include <algorithm>
 #include <vector>
 #include <stdexcept>
+#include <utility>
 
 #include <glad/glad.h>
 

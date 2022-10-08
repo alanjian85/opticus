@@ -1,7 +1,7 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-#include <algorithm>
+#include <utility>
 #include <stdexcept>
 #include <string>
 #include <fstream>

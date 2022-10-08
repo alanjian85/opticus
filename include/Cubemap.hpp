@@ -2,6 +2,7 @@
 #define CUBEMAP_HPP
 
 #include <glad/glad.h>
+#include <utility>
 
 #include "Image.hpp"
 
