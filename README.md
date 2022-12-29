@@ -1,13 +1,13 @@
 # Ray Tracing Now!
 
-**_WARNING_:** This ray tracer is broken; if you know how to fix it, please open a PR!
+**_WARNING_:** This project is no longer maintained, so it may not work on your platform!
 
 Ray Tracing Now!, also known as rtnow, is a path tracer that runs in real time. It is a flexible ray tracing application that is highly efficient and modular. The scene in the below picture is from [Peter Shirley's astonishing Ray Tracing book series](https://raytracing.github.io/)
 
 ![cover](images/cover.png) 
 
 ## Requirements
-I chose to use OpenGL 4.5 in this project because the new [Direct State Access (DSA)](https://www.khronos.org/opengl/wiki/Direct_State_Access) feature introduced in OpenGL allows developers to create graphics programs in a more intuitive manner. I also made use of OpenGL's header file mechanism to arrange codes in a more modular and strict manner, so your device must be compatible with OpenGL 4.5 and its `ARB_shading_language_include` extension in order for this program to run properly.
+I chose to use OpenGL 4.5 in this project because the new [Direct State Access (DSA)](https://www.khronos.org/opengl/wiki/Direct_State_Access) feature introduced in OpenGL allows developers to create graphics programs in a more intuitive manner. I also made use of OpenGL's header file mechanism to arrange codes in a more modular and strict fashion, so your device must be compatible with OpenGL 4.5 and its `ARB_shading_language_include` extension in order for this program to run properly.
 
 ## Design
 The software architecture of this program is based on [this ray tracer](https://github.com/RayTracing/raytracing.github.io) and [pbrt](https://github.com/mmp/pbrt-v3), which divides the system into five parts: ray, scene, material, shape, and utilities. There are three stages in the rendering process: vertex shader, main ray tracing routine, and post-processing.
