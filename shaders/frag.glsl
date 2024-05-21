@@ -1,7 +1,6 @@
 #version 450 core
 #extension GL_ARB_shading_language_include : require
 
-#include "/include/core/ray.glsl"
 #include "/include/core/scene.glsl"
 #include "/include/core/random.glsl"
 
@@ -66,11 +65,11 @@ void main() {
     Dielectric materialLeft = dielectricInit(1.5);
     Lambertian materialRight = lambertianInit(vec3(0.1, 0.2, 0.5));
 
-    sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0)), materialGround);
-    sceneBindMetal(scene, sceneAddAabb(scene, aabbInit(vec3(-0.5, -0.5, -1.5), vec3( 0.5, 0.5, -0.5))), materialCenter);
-    sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.01, 0.0, -1.0), 0.5)), materialLeft);
+    sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0, false)), materialGround);
+    sceneBindMetal(scene, sceneAddAabb(scene, aabbInit(vec3(-0.5, -0.5, -1.5), vec3( 0.5, 0.5, -0.5), false)), materialCenter);
+    sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.01, 0.0, -1.0), 0.5, false)), materialLeft);
     sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.01, 0.0, -1.0), 0.4, true)), materialLeft);
-    sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3( 1.0, 0.0, -1.0), 0.5)), materialRight);
+    sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3( 1.0, 0.0, -1.0), 0.5, false)), materialRight);
 
     vec3 color = vec3(0.0, 0.0, 0.0);
     for (uint i = 0; i < samples; ++i) {

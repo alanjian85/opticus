@@ -10,7 +10,7 @@ struct Sphere {
     bool reverse;
 };
 
-Sphere sphereInit(vec3 c, float r, bool reverse = false) {
+Sphere sphereInit(vec3 c, float r, bool reverse) {
     Sphere self;
     self.c = c;
     self.r = r;

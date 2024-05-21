@@ -4,8 +4,8 @@
 #include "/include/shapes/sphere.glsl"
 #include "/include/shapes/aabb.glsl"
 #include "/include/materials/lambertian.glsl"
-#include "/include/materials/metal.glsl"
 #include "/include/materials/dielectric.glsl"
+#include "/include/materials/metal.glsl"
 
 #define MAX_OBJECT_NUM 100u
 

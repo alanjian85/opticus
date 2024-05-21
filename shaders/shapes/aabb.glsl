@@ -2,6 +2,7 @@
 #define AABB_GLSL
 
 #include "/include/core/limits.glsl"
+#include "/include/core/scene.glsl"
 
 struct Aabb {
     vec3 pMin;
@@ -9,7 +10,7 @@ struct Aabb {
     bool reverse;
 };
 
-Aabb aabbInit(vec3 p1, vec3 p2, bool reverse = false) {
+Aabb aabbInit(vec3 p1, vec3 p2, bool reverse) {
     Aabb self;
     self.pMin = min(p1, p2);
     self.pMax = max(p1, p2);
