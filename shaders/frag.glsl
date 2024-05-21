@@ -1,8 +1,8 @@
 #version 450 core
 #extension GL_ARB_shading_language_include : require
 
-#include "/include/core/scene.glsl"
 #include "/include/core/random.glsl"
+#include "/include/core/scene.glsl"
 
 uniform float aspectRatio;
 uniform int screenWidth;
@@ -30,7 +30,8 @@ vec3 rayColor(Ray ray, Scene scene, int depth) {
             } else {
                 Ray scattered;
                 vec3 attenuation;
-                if (sceneMaterialScatter(scene, interaction.mat, ray, interaction, attenuation, scattered)) {
+                if (sceneMaterialScatter(scene, interaction.mat, ray,
+                                         interaction, attenuation, scattered)) {
                     result *= attenuation;
                     ray = scattered;
                 } else {
@@ -65,21 +66,37 @@ void main() {
     Dielectric materialLeft = dielectricInit(1.5);
     Lambertian materialRight = lambertianInit(vec3(0.1, 0.2, 0.5));
 
-    sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3(0.0, -100.5, -1.0), 100.0, false)), materialGround);
-    sceneBindMetal(scene, sceneAddAabb(scene, aabbInit(vec3(-0.5, -0.5, -1.5), vec3( 0.5, 0.5, -0.5), false)), materialCenter);
-    sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.01, 0.0, -1.0), 0.5, false)), materialLeft);
-    sceneBindDielectric(scene, sceneAddSphere(scene, sphereInit(vec3(-1.01, 0.0, -1.0), 0.4, true)), materialLeft);
-    sceneBindLambertian(scene, sceneAddSphere(scene, sphereInit(vec3( 1.0, 0.0, -1.0), 0.5, false)), materialRight);
+    sceneBindLambertian(
+        scene,
+        sceneAddSphere(scene,
+                       sphereInit(vec3(0.0, -100.5, -1.0), 100.0, false)),
+        materialGround);
+    sceneBindMetal(scene,
+                   sceneAddAabb(scene, aabbInit(vec3(-0.5, -0.5, -1.5),
+                                                vec3(0.5, 0.5, -0.5), false)),
+                   materialCenter);
+    sceneBindDielectric(
+        scene,
+        sceneAddSphere(scene, sphereInit(vec3(-1.01, 0.0, -1.0), 0.5, false)),
+        materialLeft);
+    sceneBindDielectric(
+        scene,
+        sceneAddSphere(scene, sphereInit(vec3(-1.01, 0.0, -1.0), 0.4, true)),
+        materialLeft);
+    sceneBindLambertian(
+        scene,
+        sceneAddSphere(scene, sphereInit(vec3(1.0, 0.0, -1.0), 0.5, false)),
+        materialRight);
 
     vec3 color = vec3(0.0, 0.0, 0.0);
     for (uint i = 0; i < samples; ++i) {
         Ray ray;
         ray.o = camPos;
-        ray.d = normalize(
-            (u - 0.5 + randomFloat() / float(screenWidth - 1)) * camRight * viewportWidth +
-            (v - 0.5 + randomFloat() / float(screenHeight - 1)) * camUp * viewportHeight  +
-            camFront * focalLength
-        );
+        ray.d = normalize((u - 0.5 + randomFloat() / float(screenWidth - 1)) *
+                              camRight * viewportWidth +
+                          (v - 0.5 + randomFloat() / float(screenHeight - 1)) *
+                              camUp * viewportHeight +
+                          camFront * focalLength);
         color += rayColor(ray, scene, 50);
     }
     outColor = vec4(color / float(samples), 1.0);

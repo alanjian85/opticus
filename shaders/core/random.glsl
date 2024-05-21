@@ -19,7 +19,8 @@ uniform uint frame;
 uint seed;
 
 void randomInit() {
-    seed = hash(hash(uint(gl_FragCoord.x) + hash(uint(gl_FragCoord.y))) + frame);
+    seed =
+        hash(hash(uint(gl_FragCoord.x) + hash(uint(gl_FragCoord.y))) + frame);
 }
 
 uint randomUint() {
@@ -27,9 +28,7 @@ uint randomUint() {
     return seed;
 }
 
-float randomFloat() {
-    return float(randomUint()) / float(RAND_MAX);
-}
+float randomFloat() { return float(randomUint()) / float(RAND_MAX); }
 
 float randomFloat(float min, float max) {
     return min + (max - min) * randomFloat();
@@ -37,7 +36,8 @@ float randomFloat(float min, float max) {
 
 vec3 randomUnitSphere() {
     while (true) {
-        vec3 p = vec3(randomFloat(-1.0, 1.0), randomFloat(-1.0, 1.0), randomFloat(-1.0, 1.0));
+        vec3 p = vec3(randomFloat(-1.0, 1.0), randomFloat(-1.0, 1.0),
+                      randomFloat(-1.0, 1.0));
         if (dot(p, p) < 1.0)
             return p;
     }

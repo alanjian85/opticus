@@ -1,7 +1,10 @@
 #ifndef DIELECTRIC_GLSL
 #define DIELECTRIC_GLSL
 
+#include "/include/core/random.glsl"
 #include "/include/core/ray.glsl"
+#include "/include/core/shape.glsl"
+#include "/include/core/utility.glsl"
 
 struct Dielectric {
     float refraction;
@@ -19,15 +22,16 @@ float reflectance(float cosine, float refraction) {
     return r0 + (1.0 - r0) * pow(1.0 - cosine, 5.0);
 }
 
-bool dielectricScatter(Dielectric self, Ray ray, SurfaceInteraction interaction, 
-                       out vec3 attenuation, out Ray scattered)
-{
+bool dielectricScatter(Dielectric self, Ray ray, SurfaceInteraction interaction,
+                       out vec3 attenuation, out Ray scattered) {
     attenuation = vec3(1.0, 1.0, 1.0);
-    float refraction = interaction.front ? (1.0 / self.refraction) : self.refraction;
+    float refraction =
+        interaction.front ? (1.0 / self.refraction) : self.refraction;
     float cosine = dot(-ray.d, interaction.n);
     float sine = sqrt(1.0 - cosine * cosine);
     vec3 direction;
-    if (refraction * sine > 1.0 || reflectance(cosine, refraction) > randomFloat()) {
+    if (refraction * sine > 1.0 ||
+        reflectance(cosine, refraction) > randomFloat()) {
         direction = reflect(ray.d, interaction.n);
     } else {
         direction = refract(ray.d, interaction.n, refraction);

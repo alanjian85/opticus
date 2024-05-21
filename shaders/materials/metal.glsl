@@ -13,11 +13,11 @@ Metal metalInit(vec3 albedo, float fuzz) {
     return metal;
 }
 
-bool metalScatter(Metal self, Ray ray, SurfaceInteraction interaction, 
-                  out vec3 attenuation, out Ray scattered)
-{
+bool metalScatter(Metal self, Ray ray, SurfaceInteraction interaction,
+                  out vec3 attenuation, out Ray scattered) {
     vec3 reflected = reflect(ray.d, interaction.n);
-    scattered = rayInit(interaction.p, normalize(reflected + self.fuzz * randomUnitSphere()));
+    scattered = rayInit(interaction.p,
+                        normalize(reflected + self.fuzz * randomUnitSphere()));
     attenuation = self.albedo;
     return dot(reflected, interaction.n) > 0.0;
 }

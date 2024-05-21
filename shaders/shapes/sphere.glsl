@@ -18,15 +18,17 @@ Sphere sphereInit(vec3 c, float r, bool reverse) {
     return self;
 }
 
-bool sphereIntersect(Sphere self, Ray ray, out SurfaceInteraction interaction, float tmin, float tmax) {
+bool sphereIntersect(Sphere self, Ray ray, out SurfaceInteraction interaction,
+                     float tmin, float tmax) {
     vec3 oc = ray.o - self.c;
     float a = dot(ray.d, ray.d);
     float b = dot(oc, ray.d);
     float c = dot(oc, oc) - self.r * self.r;
     float discriminant = b * b - a * c;
-    if (discriminant < 0) return false;
+    if (discriminant < 0)
+        return false;
     float sqrtd = sqrt(discriminant);
-    interaction.t =  (-b - sqrtd) / a;
+    interaction.t = (-b - sqrtd) / a;
     if (interaction.t < tmin || interaction.t > tmax) {
         interaction.t = (-b + sqrtd) / a;
         if (interaction.t < tmin || interaction.t > tmax) {

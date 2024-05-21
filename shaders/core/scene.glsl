@@ -1,11 +1,11 @@
 #ifndef SCENE_GLSL
 #define SCENE_GLSL
 
-#include "/include/shapes/sphere.glsl"
-#include "/include/shapes/aabb.glsl"
-#include "/include/materials/lambertian.glsl"
 #include "/include/materials/dielectric.glsl"
+#include "/include/materials/lambertian.glsl"
 #include "/include/materials/metal.glsl"
+#include "/include/shapes/aabb.glsl"
+#include "/include/shapes/sphere.glsl"
 
 #define MAX_OBJECT_NUM 100u
 
@@ -33,7 +33,7 @@ Scene sceneInit() {
 
     self.numSphere = 0;
     self.numAabb = 0;
-    
+
     self.numLambertian = 0;
     self.numMetal = 0;
     self.numDielectric = 0;
@@ -73,32 +73,43 @@ void sceneBindDielectric(inout Scene self, uint index, Dielectric dielectric) {
     self.numDielectric++;
 }
 
-bool sceneObjectIntersect(Scene self, uint object, Ray ray, out SurfaceInteraction interaction, float tmin, float tmax) {
+bool sceneObjectIntersect(Scene self, uint object, Ray ray,
+                          out SurfaceInteraction interaction, float tmin,
+                          float tmax) {
     switch (object >> 16) {
-        case 0x0000:
-            return sphereIntersect(self.spheres[object & 0xFFFF], ray, interaction, tmin, tmax);
-        case 0x0001:
-            return aabbIntersect(self.aabbs[object & 0xFFFF], ray, interaction, tmin, tmax);
+    case 0x0000:
+        return sphereIntersect(self.spheres[object & 0xFFFF], ray, interaction,
+                               tmin, tmax);
+    case 0x0001:
+        return aabbIntersect(self.aabbs[object & 0xFFFF], ray, interaction,
+                             tmin, tmax);
     }
 }
 
-bool sceneMaterialScatter(Scene self, uint material, Ray ray, SurfaceInteraction interaction, out vec3 attenuation, out Ray scattered) {
+bool sceneMaterialScatter(Scene self, uint material, Ray ray,
+                          SurfaceInteraction interaction, out vec3 attenuation,
+                          out Ray scattered) {
     switch (material >> 16) {
-        case 0x0000:
-            return lambertianScatter(self.lambertians[material & 0xFFFF], ray, interaction, attenuation, scattered);
-        case 0x0001:
-            return metalScatter(self.metals[material & 0xFFFF], ray, interaction, attenuation, scattered);
-        case 0x0002:
-            return dielectricScatter(self.dielectrics[material & 0xFFFF], ray, interaction, attenuation, scattered);
+    case 0x0000:
+        return lambertianScatter(self.lambertians[material & 0xFFFF], ray,
+                                 interaction, attenuation, scattered);
+    case 0x0001:
+        return metalScatter(self.metals[material & 0xFFFF], ray, interaction,
+                            attenuation, scattered);
+    case 0x0002:
+        return dielectricScatter(self.dielectrics[material & 0xFFFF], ray,
+                                 interaction, attenuation, scattered);
     }
 }
 
-bool sceneIntersect(Scene self, Ray ray, out SurfaceInteraction interaction, float tmin, float tmax) {
+bool sceneIntersect(Scene self, Ray ray, out SurfaceInteraction interaction,
+                    float tmin, float tmax) {
     bool intersected = false;
     float nearest = tmax;
     SurfaceInteraction temp;
     for (uint i = 0; i < self.numObject; ++i) {
-        if (sceneObjectIntersect(self, self.objects[i], ray, temp, tmin, nearest)) {
+        if (sceneObjectIntersect(self, self.objects[i], ray, temp, tmin,
+                                 nearest)) {
             intersected = true;
             nearest = temp.t;
             interaction = temp;
