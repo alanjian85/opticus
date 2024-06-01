@@ -234,7 +234,7 @@ int main() {
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
-    GLFWwindow* window = glfwCreateWindow(1024, 720, "Ray Tracing Now!", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1024, 720, "Opticus", nullptr, nullptr);
     if (!window) {
         std::cerr << "Failed to create window\n";
         return 1;

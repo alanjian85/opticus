@@ -20,7 +20,6 @@ find_package(glm REQUIRED)
 
 target_link_libraries(opticus PUBLIC
     glfw
-    glm
 )
 
 target_include_directories(opticus PUBLIC
