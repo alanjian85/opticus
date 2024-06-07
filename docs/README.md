@@ -1,6 +1,6 @@
 # Opticus
 
-Opticus (/ˈop.ti.kus/, a Latin word meaning "optic") is an implementation of the ray tracer introduced in Peter Shirley's remarkable [Ray Tracing in One Weekend](https://raytracing.github.io/) series. It incorporates several enhancements and optimizations to render a photorealistic scene featuring two spheres and one cube with exceptional efficiency, generating frames seamlessly in real-time (though some noise may be present, which can be mitigated by staring at a certain position shortly). This performance is made possible through the utilization of OpenGL's highly efficient shader mechanism, enabling the whole rendering process to run on the GPU.
+Opticus ([ˈɔpt̪ɪkʊs̠], a Latin word meaning "optic") is an implementation of the ray tracer introduced in Peter Shirley's remarkable [Ray Tracing in One Weekend](https://raytracing.github.io/) series. It incorporates several enhancements and optimizations to render a photorealistic scene featuring two spheres and one cube with exceptional efficiency, generating frames seamlessly in real-time (though some noise may be present, which can be mitigated by staring at a certain position shortly). This performance is made possible through the utilization of OpenGL's highly efficient shader mechanism, enabling the whole rendering process to run on the GPU.
 
 ![Opticus](opticus.png) 
 
